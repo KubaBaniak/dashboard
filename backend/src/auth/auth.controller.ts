@@ -18,16 +18,11 @@ export class AuthController {
     return this.authService.login({ userId: userData.id, role: userData.role });
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @HttpCode(HttpStatus.CREATED)
   @Post("signup")
   signUp(@Body() signUpData: SignUpDto) {
     return this.authService.signUp(signUpData);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Get("user")
-  testuser() {
-    return "user";
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
