@@ -1,4 +1,4 @@
 export interface SignInDto {
-  name: string;
-  password: string;
+  userId: number;
+  role: "ADMIN" | "USER";
 }
