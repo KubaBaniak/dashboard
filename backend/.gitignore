@@ -3,6 +3,9 @@
 /node_modules
 /build
 
+# additional
+/.pgdata
+
 # Logs
 logs
 *.log
