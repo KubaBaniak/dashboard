@@ -1,16 +1,91 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  provider      = "prisma-client-js"
+  output        = "../generated/prisma"
   binaryTargets = ["native", "linux-musl"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  name  String?
+  role  Role    @default(USER)
+}
+
+model Client {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String?
+  phone     String?
+  address   String?
+  company   String?
+  createdAt DateTime @default(now())
+  orders    Order[]
+}
+
+model Order {
+  id              Int         @id @default(autoincrement())
+  buyer           Client      @relation(fields: [buyerId], references: [id])
+  buyerId         Int
+  items           OrderItem[]
+  shippingAddress String
+  billingAddress  String
+  status          OrderStatus @default(PENDING)
+  createdAt       DateTime    @default(now())
+}
+
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  order     Order   @relation(fields: [orderId], references: [id])
+  orderId   Int
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int
+  quantity  Int
+  price     Decimal @db.Decimal(10, 2)
+}
+
+model Product {
+  id            Int         @id @default(autoincrement())
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  title         String
+  description   String?
+  sku           String      @unique
+  stockQuantity Int         @default(0)
+  price         Decimal     @db.Decimal(10, 2)
+  categories    Category[]  @relation("ProductToCategory")
+  orderItems    OrderItem[]
+  deliveries    Delivery[]
+}
+
+model Category {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?
+  products    Product[] @relation("ProductToCategory")
+}
+
+model Delivery {
+  id          Int      @id @default(autoincrement())
+  product     Product  @relation(fields: [productId], references: [id])
+  productId   Int
+  quantity    Int
+  deliveredAt DateTime @default(now())
+  note        String?
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+  CANCELLED
 }
