@@ -1,7 +1,7 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, HttpCode, HttpStatus, Post, UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { SignUpDto } from "./dto/sign-up.dto";
-import { User } from "@prisma/client";
+import { Role, User } from "@prisma/client";
 import { Roles } from "./utils/roles.decorator";
 import { RolesGuard } from "./guards/role-guard";
 import { JwtAuthGuard } from "./guards/jwt-guard";
@@ -20,15 +20,9 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @HttpCode(HttpStatus.CREATED)
+  @Roles(Role.ADMIN)
   @Post("signup")
   signUp(@Body() signUpData: SignUpDto) {
     return this.authService.signUp(signUpData);
-  }
-
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles("admin")
-  @Get("admin")
-  testadmin() {
-    return "admin";
   }
 }
