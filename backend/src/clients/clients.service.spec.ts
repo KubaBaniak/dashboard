@@ -5,6 +5,8 @@ import { mock } from "jest-mock-extended";
 import { ConflictException } from "@nestjs/common";
 import { Client } from "@prisma/client";
 import { faker } from "@faker-js/faker";
+import { NotFoundException } from "@nestjs/common";
+import { UpdateClientDto } from "./dto/update-client.dto";
 
 describe("ClientsService", () => {
   let service: ClientsService;
@@ -121,6 +123,83 @@ describe("ClientsService", () => {
 
       const result = await service.getClientById(999);
       expect(result).toBeNull();
+    });
+  });
+
+  describe("updateClient", () => {
+    it("should update and return client if found", async () => {
+      const id = faker.number.int();
+      const existingClient: Client = {
+        id,
+        email: faker.internet.email(),
+        name: "Old Name",
+        phone: "111111111",
+        address: "Old Street",
+        company: "Old Co",
+        createdAt: new Date(),
+      };
+
+      const dto: UpdateClientDto = {
+        name: "New Name",
+        phone: "222222222",
+      };
+
+      const updatedClient: Client = {
+        ...existingClient,
+        ...dto,
+      };
+
+      clientsRepository.getClientById.mockResolvedValue(existingClient);
+      clientsRepository.updateClient.mockResolvedValue(updatedClient);
+
+      const result = await service.updateClient(id, dto);
+
+      expect(result).toEqual(updatedClient);
+      expect(clientsRepository.getClientById).toHaveBeenCalledWith(id);
+      expect(clientsRepository.updateClient).toHaveBeenCalledWith(id, dto);
+    });
+
+    it("should throw NotFoundException if client doesn't exist", async () => {
+      const id = faker.number.int();
+      const dto: UpdateClientDto = { name: "Won't be used" };
+
+      clientsRepository.getClientById.mockResolvedValue(null);
+
+      await expect(service.updateClient(id, dto)).rejects.toThrow(NotFoundException);
+      expect(clientsRepository.updateClient).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("deleteClient", () => {
+    it("should delete and return client if found", async () => {
+      const id = faker.number.int();
+      const client: Client = {
+        id,
+        email: faker.internet.email(),
+        name: faker.person.fullName(),
+        phone: faker.phone.number(),
+        address: faker.location.streetAddress(),
+        company: faker.company.name(),
+        createdAt: new Date(),
+      };
+
+      clientsRepository.getClientById.mockResolvedValue(client);
+      clientsRepository.deleteClient.mockResolvedValue(client);
+
+      const result = await service.deleteClient(id);
+
+      expect(result).toEqual(client);
+      expect(clientsRepository.getClientById).toHaveBeenCalledWith(id);
+      expect(clientsRepository.deleteClient).toHaveBeenCalledWith(id);
+    });
+
+    it("should throw NotFoundException if client does not exist", async () => {
+      const id = faker.number.int();
+
+      clientsRepository.getClientById.mockResolvedValue(null);
+
+      await expect(service.deleteClient(id)).rejects.toThrow(NotFoundException);
+      expect(clientsRepository.deleteClient).not.toHaveBeenCalled();
     });
   });
 });
