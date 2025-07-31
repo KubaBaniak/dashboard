@@ -24,4 +24,12 @@ export class ClientsRepository {
   findClientByEmail(email: string): Promise<Client | null> {
     return this.prismaService.client.findUnique({ where: { email } });
   }
+
+  getAllClients(): Promise<Client[] | null> {
+    return this.prismaService.client.findMany();
+  }
+
+  getClientById(id: number): Promise<Client | null> {
+    return this.prismaService.client.findUnique({ where: { id } });
+  }
 }

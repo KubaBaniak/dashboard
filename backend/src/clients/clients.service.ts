@@ -16,4 +16,12 @@ export class ClientsService {
 
     return this.clientsRepository.createClient(data);
   }
+
+  getAllClients(): Promise<Client[] | null> {
+    return this.clientsRepository.getAllClients();
+  }
+
+  getClientById(id: number): Promise<Client | null> {
+    return this.clientsRepository.getClientById(id);
+  }
 }
