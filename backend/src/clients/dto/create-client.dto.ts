@@ -6,11 +6,11 @@ export class CreateClientDto {
 
   @IsOptional()
   @IsString()
-  name?: string;
+  name: string;
 
   @IsOptional()
   @IsPhoneNumber("PL")
-  phone?: string;
+  phone: string;
 
   @IsString()
   @IsNotEmpty()
@@ -18,5 +18,5 @@ export class CreateClientDto {
 
   @IsOptional()
   @IsString()
-  company?: string;
+  company: string;
 }

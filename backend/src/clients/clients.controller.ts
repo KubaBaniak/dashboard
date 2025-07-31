@@ -1,5 +1,5 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, UseGuards } from "@nestjs/common";
-import { JwtAuthGuard } from "src/auth/guards/jwt-guard";
+import { JwtAuthGuard } from "../auth/guards/jwt-guard";
 import { CreateClientDto } from "./dto/create-client.dto";
 import { ClientsService } from "./clients.service";
 import { Client } from "@prisma/client";
