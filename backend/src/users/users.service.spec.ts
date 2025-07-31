@@ -3,7 +3,7 @@ import { UsersService } from "./users.service";
 import { UsersRepository } from "./users.repository";
 import { mock } from "jest-mock-extended";
 import { faker } from "@faker-js/faker/.";
-import { Role } from "@prisma/client";
+import { Role, User } from "@prisma/client";
 import { PrismaService } from "../database/prisma.service";
 
 describe("UsersService", () => {
@@ -22,7 +22,14 @@ describe("UsersService", () => {
   describe("findUserByEmail", () => {
     it("should find user by email", async () => {
       const email = faker.internet.email();
-      const user = { id: faker.number.int(), name: null, email, password: faker.internet.password(), role: Role.USER };
+      const user: User = {
+        id: faker.number.int(),
+        name: null,
+        email,
+        password: faker.internet.password(),
+        role: Role.USER,
+        refreshToken: faker.string.alphanumeric({ length: 32 }),
+      };
       usersRepository.getUserByEmail.mockResolvedValue(user);
 
       const foundUser = await usersService.findUserByEmail(email);
@@ -35,7 +42,14 @@ describe("UsersService", () => {
     it("should create user", async () => {
       const email = faker.internet.email();
       const password = faker.internet.password();
-      const user = { id: faker.number.int(), name: null, email, password, role: Role.USER };
+      const user: User = {
+        id: faker.number.int(),
+        name: null,
+        email,
+        password,
+        role: Role.USER,
+        refreshToken: faker.string.alphanumeric({ length: 32 }),
+      };
       usersRepository.createUser.mockResolvedValue(user);
 
       const createdUser = await usersService.createUser(email, password);

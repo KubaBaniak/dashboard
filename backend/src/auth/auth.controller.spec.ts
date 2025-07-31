@@ -22,21 +22,25 @@ describe("AuthController", () => {
   });
 
   describe("login", () => {
-    it("should return accessToken from AuthService", () => {
+    it("should return accessToken from AuthService", async () => {
       const user: User = {
         id: faker.number.int(),
         email: faker.internet.email(),
         name: faker.person.firstName(),
         password: faker.internet.password(),
+        refreshToken: faker.string.alphanumeric({ length: 32 }),
         role: Role.ADMIN,
       };
 
-      const token = { accessToken: "mocked.jwt.token" };
-      authService.login.mockReturnValue(token);
+      const tokens = {
+        accessToken: "access.token",
+        refreshToken: "refresh.token",
+      };
+      authService.login.mockResolvedValue(tokens);
 
-      const result = controller.login(user);
+      const result = await controller.login(user);
 
-      expect(result).toEqual(token);
+      expect(result).toEqual(tokens);
     });
   });
 
@@ -52,6 +56,7 @@ describe("AuthController", () => {
         email: dto.email,
         password: "hashed",
         name: null,
+        refreshToken: faker.string.alphanumeric({ length: 32 }),
         role: Role.USER,
       };
 
