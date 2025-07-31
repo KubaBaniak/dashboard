@@ -3,10 +3,26 @@ import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { UsersModule } from "./users/users.module";
 import { AuthModule } from "./auth/auth.module";
-import { ConfigModule } from "@nestjs/config";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { CacheModule } from "@nestjs/cache-manager";
+import * as redisStore from "cache-manager-redis-store";
 
 @Module({
-  imports: [UsersModule, AuthModule, ConfigModule.forRoot({ isGlobal: true })],
+  imports: [
+    UsersModule,
+    AuthModule,
+    ConfigModule.forRoot({ isGlobal: true }),
+    CacheModule.registerAsync({
+      isGlobal: true,
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        store: redisStore,
+        host: configService.get<string>("REDIS_HOST"),
+        port: configService.get<number>("REDIS_PORT"),
+      }),
+    }),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

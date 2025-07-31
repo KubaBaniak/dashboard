@@ -3,9 +3,11 @@ import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import { ConfigService } from "@nestjs/config";
 import { JwtPayload } from "../types/jwt-payload.type";
+import { Request } from "express";
+import { JwtPayloadWithRefreshToken } from "../types/jwt-payload-refresh-token.type";
 
 @Injectable()
-export class AccessStrategy extends PassportStrategy(Strategy, "jwt") {
+export class RefreshStrategy extends PassportStrategy(Strategy, "jwt-refresh") {
   constructor(configService: ConfigService) {
     const jwtSecret = configService.get<string>("JWT_SECRET");
     if (!jwtSecret) {
@@ -14,12 +16,16 @@ export class AccessStrategy extends PassportStrategy(Strategy, "jwt") {
 
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      ignoreExpiration: false,
       secretOrKey: jwtSecret,
+      passReqToCallback: true,
     });
   }
 
-  validate(payload: { sub: number; role: string }): JwtPayload {
-    return payload;
+  validate(request: Request, payload: JwtPayload): JwtPayloadWithRefreshToken {
+    const refreshToken = (request.get("authorization") ?? "").replace("Bearer", " ").trim();
+    return {
+      ...payload,
+      refreshToken,
+    };
   }
 }
