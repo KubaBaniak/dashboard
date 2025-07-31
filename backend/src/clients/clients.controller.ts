@@ -1,8 +1,9 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, UseGuards } from "@nestjs/common";
 import { JwtAuthGuard } from "../auth/guards/jwt-guard";
 import { CreateClientDto } from "./dto/create-client.dto";
 import { ClientsService } from "./clients.service";
 import { Client } from "@prisma/client";
+import { UpdateClientDto } from "./dto/update-client.dto";
 
 @Controller("clients")
 export class ClientsController {
@@ -27,5 +28,19 @@ export class ClientsController {
   @Get("/:id")
   getClientById(@Param("id") clientId: string): Promise<Client | null> {
     return this.clientsService.getClientById(+clientId);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  @Patch("/:id")
+  updateClient(@Param("id") clientId: string, @Body() clientData: UpdateClientDto): Promise<Client | null> {
+    return this.clientsService.updateClient(+clientId, clientData);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  @Delete("/:id")
+  deleteClient(@Param("id") clientId): Promise<Client> {
+    return this.clientsService.deleteClient(+clientId);
   }
 }
