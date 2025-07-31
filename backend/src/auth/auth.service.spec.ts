@@ -7,8 +7,9 @@ import * as bcrypt from "bcrypt";
 import { JwtService } from "@nestjs/jwt";
 import { UsersRepository } from "../users/users.repository";
 import { PrismaService } from "../database/prisma.service";
-import { BadRequestException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException } from "@nestjs/common";
 import { mock } from "jest-mock-extended";
+import { ConfigService } from "@nestjs/config";
 
 describe("AuthService", () => {
   let authService: AuthService;
@@ -25,6 +26,7 @@ describe("AuthService", () => {
         { provide: UsersService, useValue: usersService },
         { provide: JwtService, useValue: jwtService },
         UsersRepository,
+        ConfigService,
         PrismaService,
       ],
     }).compile();
@@ -37,15 +39,16 @@ describe("AuthService", () => {
       const password = "securePass123";
       const hashedPassword = await bcrypt.hash(password, 12);
 
-      const user = {
+      const user: User = {
         id: faker.number.int(),
         email: faker.internet.email(),
         name: null,
         password: hashedPassword,
         role: Role.USER,
+        refreshToken: null,
       };
 
-      jest.spyOn(usersService, "findUserByEmail").mockResolvedValue(user);
+      usersService.findUserByEmail.mockResolvedValue(user);
 
       const validatedUser = await authService.validateUser({
         email: user.email,
@@ -56,7 +59,7 @@ describe("AuthService", () => {
     });
 
     it("returns null when user is not found", async () => {
-      jest.spyOn(usersService, "findUserByEmail").mockResolvedValue(null);
+      usersService.findUserByEmail.mockResolvedValue(null);
 
       const result = await authService.validateUser({
         email: faker.internet.email(),
@@ -67,15 +70,16 @@ describe("AuthService", () => {
     });
 
     it("returns null when password is incorrect", async () => {
-      const user = {
+      const user: User = {
         id: faker.number.int(),
         email: faker.internet.email(),
         name: null,
         password: await bcrypt.hash("correctPassword", 12),
         role: Role.USER,
+        refreshToken: null,
       };
 
-      jest.spyOn(usersService, "findUserByEmail").mockResolvedValue(user);
+      usersService.findUserByEmail.mockResolvedValue(user);
 
       const result = await authService.validateUser({
         email: user.email,
@@ -113,15 +117,34 @@ describe("AuthService", () => {
   });
 
   describe("login", () => {
-    it("returns a valid access token", () => {
-      const token = "mocked.token.value";
-      const payload = { userId: faker.number.int(), role: "admin" };
+    it("returns tokens and updates refresh token if user exists", async function (this: void) {
+      const userId = faker.number.int();
+      const email = faker.internet.email();
+      const role = Role.USER;
 
-      jest.spyOn(jwtService, "sign").mockReturnValue(token);
+      const user = { id: userId, name: null, email, password: "hashed", role, refreshToken: null } as User;
 
-      const result = authService.login(payload);
+      const tokens = {
+        accessToken: "access.token",
+        refreshToken: "refresh.token",
+      };
 
-      expect(result).toEqual({ accessToken: token });
+      usersService.findUserByEmail.mockResolvedValue(user);
+      jwtService.signAsync.mockResolvedValueOnce(tokens.refreshToken).mockResolvedValueOnce(tokens.accessToken);
+      usersService.updateRefreshToken.mockResolvedValue(user);
+
+      const result = await authService.login(email);
+
+      expect(result).toEqual(tokens);
+      expect(usersService.updateRefreshToken).toHaveBeenCalledWith(userId, expect.any(String));
+    });
+
+    it("throws ForbiddenException if user does not exist", async () => {
+      usersService.findUserByEmail.mockResolvedValue(null);
+
+      const result = authService.login("invalid@example.com");
+
+      await expect(result).rejects.toThrow(ForbiddenException);
     });
   });
 
@@ -146,6 +169,75 @@ describe("AuthService", () => {
       const result = await authService.signUp({ email, password });
 
       expect(result).toEqual(user);
+    });
+  });
+
+  describe("refresh", () => {
+    it("refreshes tokens if valid refresh token is provided", async () => {
+      const userId = faker.number.int();
+      const email = faker.internet.email();
+      const password = faker.internet.password();
+      const hashedRefresh = await bcrypt.hash("valid.refresh.token", 12);
+
+      const user: User = {
+        id: userId,
+        email,
+        password,
+        name: null,
+        role: Role.USER,
+        refreshToken: hashedRefresh,
+      };
+
+      const newTokens = {
+        accessToken: "new.access.token",
+        refreshToken: "new.refresh.token",
+      };
+
+      usersService.findUserById.mockResolvedValue(user);
+      jwtService.signAsync.mockResolvedValueOnce(newTokens.refreshToken).mockResolvedValueOnce(newTokens.accessToken);
+      usersService.updateRefreshToken.mockResolvedValue(user);
+
+      const result = await authService.refresh(userId, "valid.refresh.token");
+
+      expect(result).toEqual(newTokens);
+      expect(usersService.updateRefreshToken).toHaveBeenCalled();
+    });
+
+    it("throws ForbiddenException if user not found", async () => {
+      usersService.findUserById.mockResolvedValue(null);
+
+      await expect(authService.refresh(123, "token")).rejects.toThrow("Access denied");
+    });
+
+    it("throws ForbiddenException if refresh token does not match", async () => {
+      const user: User = {
+        id: 1,
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+        name: null,
+        role: Role.USER,
+        refreshToken: await bcrypt.hash("some.other.token", 12),
+      };
+
+      usersService.findUserById.mockResolvedValue(user);
+
+      await expect(authService.refresh(1, "invalid.token")).rejects.toThrow("Access denied");
+    });
+  });
+
+  describe("logout", () => {
+    it("removes the refresh token", async () => {
+      const user: User = {
+        id: 1,
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+        name: null,
+        role: Role.USER,
+        refreshToken: null,
+      };
+      usersService.removeRefreshToken.mockResolvedValue(user);
+      await authService.logout(1);
+      expect(usersService.removeRefreshToken).toHaveBeenCalledWith(1);
     });
   });
 });

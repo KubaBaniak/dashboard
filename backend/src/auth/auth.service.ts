@@ -96,11 +96,11 @@ export class AuthService {
     await this.usersService.updateRefreshToken(userId, hashedRefreshedToken);
   }
 
-  private comparePasswords(plainText: string, hashed: string): Promise<boolean> {
+  comparePasswords(plainText: string, hashed: string): Promise<boolean> {
     return bcrypt.compare(plainText, hashed);
   }
 
-  private async hashPassword(password: string) {
+  async hashPassword(password: string) {
     return bcrypt.hash(password, 12);
   }
 }
