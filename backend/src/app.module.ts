@@ -8,10 +8,9 @@ import { CacheModule } from "@nestjs/cache-manager";
 import { ClientsModule } from "./clients/clients.module";
 import { ProductsModule } from "./products/products.module";
 import { CategoriesModule } from "./categories/categories.module";
-import { OrdersService } from "./orders/orders.service";
-import { OrdersController } from "./orders/orders.controller";
 import { OrdersModule } from "./orders/orders.module";
 import { OrderItemsModule } from "./order-items/order-items.module";
+import { DeliveriesModule } from "./deliveries/deliveries.module";
 import * as redisStore from "cache-manager-redis-store";
 
 @Module({
@@ -34,6 +33,7 @@ import * as redisStore from "cache-manager-redis-store";
     CategoriesModule,
     OrdersModule,
     OrderItemsModule,
+    DeliveriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

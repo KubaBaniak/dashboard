@@ -2,7 +2,7 @@ import { BadRequestException, ConflictException, Injectable, NotFoundException }
 import { ProductsRepository } from "./products.repository";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
-import { Product } from "@prisma/client";
+import { Prisma, Product } from "@prisma/client";
 import { CategoriesService } from "../categories/categories.service";
 
 @Injectable()
@@ -65,5 +65,21 @@ export class ProductsService {
     }
 
     return products;
+  }
+
+  async updateQuantity(tx: Prisma.TransactionClient, productId: number, changeInQty: number): Promise<Product> {
+    const product = await this.getProductById(productId);
+
+    if (!product) {
+      throw new NotFoundException("NO PRODUCT FOUND - CANNOT UPDATE QTY");
+    }
+
+    const updatedQty = product.stockQuantity + changeInQty;
+
+    if (updatedQty < 0) {
+      throw new BadRequestException("INSUFFICIENT STOCK - CANNOT DECREASE BELOW ZERO");
+    }
+
+    return this.productsRepository.updateProductInTx(tx, productId, { stockQuantity: updatedQty });
   }
 }

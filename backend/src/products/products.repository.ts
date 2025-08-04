@@ -48,6 +48,17 @@ export class ProductsRepository {
     return this.prismaService.product.update({ where: { id: productId }, data });
   }
 
+  updateProductInTx(
+    tx: Prisma.TransactionClient,
+    productId: number,
+    data: Prisma.ProductUpdateInput,
+  ): Promise<Product> {
+    return tx.product.update({
+      where: { id: productId },
+      data,
+    });
+  }
+
   deleteProduct(productId: number): Promise<Product> {
     return this.prismaService.product.delete({ where: { id: productId } });
   }
