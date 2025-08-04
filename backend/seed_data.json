@@ -1,0 +1,357 @@
+{
+  "users": [
+    {
+      "email": "gregory85@diaz.com",
+      "password": "a2f3ae20eb0715473721dba39c71b16f1f6ab4ada7ca9ee035a8baa1f1169f51",
+      "name": "Hannah Valencia DVM",
+      "role": "ADMIN",
+      "refreshToken": null
+    },
+    {
+      "email": "wooddavid@campbell.com",
+      "password": "b7466473765fcf011786e842e41e5b585250ba666ebc04c679682f46322912ec",
+      "name": "Matthew Kirk",
+      "role": "USER",
+      "refreshToken": null
+    },
+    {
+      "email": "gary67@yahoo.com",
+      "password": "1bbcef1bd8b68ed44a331e217cc1461b77011f1df9687795e42023071b7e23d1",
+      "name": "Brandon Davis",
+      "role": "USER",
+      "refreshToken": null
+    },
+    {
+      "email": "whiteaaron@yahoo.com",
+      "password": "7c20e1842988108ffed1a7fcf6e48871cf098fe0370b94a04f38322f20543f45",
+      "name": "Ashlee Wright",
+      "role": "USER",
+      "refreshToken": null
+    },
+    {
+      "email": "ymoore@gmail.com",
+      "password": "4b455679617f87fc2b2a3120b0901bfd0d8de023b0c2a3e2db4300634cca9e4e",
+      "name": "Dr. Kimberly Howard",
+      "role": "USER",
+      "refreshToken": null
+    }
+  ],
+  "clients": [
+    {
+      "email": "walkerjamie@bright-jacobson.info",
+      "name": "Andrew Gordon",
+      "phone": "+1-157-459-9270x1463",
+      "address": "41055 Collins Road Suite 088\nSarahland, KY 98729",
+      "company": "Johnson, Bell and Hernandez",
+      "createdAt": "2025-04-03T04:37:05"
+    },
+    {
+      "email": "jacksonkarina@gmail.com",
+      "name": "Joel Stewart",
+      "phone": "121.875.5567",
+      "address": "9867 Ray Points\nNew Madison, NY 91466",
+      "company": "Smith PLC",
+      "createdAt": "2025-02-18T23:33:13"
+    },
+    {
+      "email": "valerie19@lopez-warren.info",
+      "name": "Alexandra Cabrera",
+      "phone": "272.273.3468",
+      "address": "499 Conner Forks\nWest Kevinfort, WI 75345",
+      "company": "Cross, Wall and Howell",
+      "createdAt": "2025-04-21T23:59:00"
+    },
+    {
+      "email": "lewismary@olson.org",
+      "name": "Jordan Howard",
+      "phone": "(418)628-2566x16752",
+      "address": "21761 Greene Estates Suite 000\nNorth Kaylahaven, NH 23353",
+      "company": "Singh-Mendez",
+      "createdAt": "2025-07-14T23:23:54"
+    },
+    {
+      "email": "gregory09@fritz-miller.com",
+      "name": "Amber Phelps",
+      "phone": "065-407-3486x03632",
+      "address": "6019 Gutierrez Drives\nWardstad, NY 03100",
+      "company": "Garner-Gibson",
+      "createdAt": "2025-05-25T21:44:41"
+    }
+  ],
+  "categories": [
+    {
+      "name": "High",
+      "description": "Run act offer house."
+    },
+    {
+      "name": "Indeed",
+      "description": "Girl type worker suffer arrive."
+    },
+    {
+      "name": "Forward",
+      "description": "Popular seat cut again movement maintain then."
+    },
+    {
+      "name": "Focus",
+      "description": "Medical assume ground current begin decade teach."
+    },
+    {
+      "name": "Draw",
+      "description": "Edge technology performance grow system suffer first."
+    }
+  ],
+  "products": [
+    {
+      "title": "Edge",
+      "description": "Garden skill total investment group.",
+      "sku": "SKU-1047-EqR",
+      "stockQuantity": 43,
+      "price": 349.53,
+      "categories": [
+        2
+      ],
+      "createdAt": "2025-06-13T07:11:18",
+      "updatedAt": "2025-08-04T20:52:39.842973"
+    },
+    {
+      "title": "Only",
+      "description": "Model can kitchen say close.",
+      "sku": "SKU-7801-ZRc",
+      "stockQuantity": 70,
+      "price": 373.52,
+      "categories": [
+        4
+      ],
+      "createdAt": "2025-06-04T13:51:09",
+      "updatedAt": "2025-08-04T20:52:39.843090"
+    },
+    {
+      "title": "Rest",
+      "description": "Nation task figure then none might.",
+      "sku": "SKU-8039-bkV",
+      "stockQuantity": 33,
+      "price": 92.5,
+      "categories": [
+        5
+      ],
+      "createdAt": "2025-07-08T19:57:17",
+      "updatedAt": "2025-08-04T20:52:39.843203"
+    },
+    {
+      "title": "Stuff",
+      "description": "Mr serve opportunity.",
+      "sku": "SKU-4929-baM",
+      "stockQuantity": 100,
+      "price": 291.44,
+      "categories": [
+        3,
+        5
+      ],
+      "createdAt": "2025-07-20T18:16:34",
+      "updatedAt": "2025-08-04T20:52:39.843302"
+    },
+    {
+      "title": "Positive",
+      "description": "Campaign front school quickly evening.",
+      "sku": "SKU-7581-eOP",
+      "stockQuantity": 1,
+      "price": 197.47,
+      "categories": [
+        3
+      ],
+      "createdAt": "2025-04-01T17:02:01",
+      "updatedAt": "2025-08-04T20:52:39.843420"
+    },
+    {
+      "title": "Answer",
+      "description": "Green respond camera it parent dark with especially.",
+      "sku": "SKU-4294-Fdg",
+      "stockQuantity": 30,
+      "price": 18.14,
+      "categories": [
+        3
+      ],
+      "createdAt": "2025-05-11T09:45:19",
+      "updatedAt": "2025-08-04T20:52:39.843515"
+    },
+    {
+      "title": "Adult",
+      "description": "Course because become send head big every lead.",
+      "sku": "SKU-4309-CjM",
+      "stockQuantity": 32,
+      "price": 349.69,
+      "categories": [
+        3
+      ],
+      "createdAt": "2025-05-18T23:10:26",
+      "updatedAt": "2025-08-04T20:52:39.843608"
+    },
+    {
+      "title": "What",
+      "description": "Ago see mother order knowledge look.",
+      "sku": "SKU-8407-NEG",
+      "stockQuantity": 28,
+      "price": 32.42,
+      "categories": [
+        1
+      ],
+      "createdAt": "2025-05-02T19:01:19",
+      "updatedAt": "2025-08-04T20:52:39.843721"
+    },
+    {
+      "title": "Know",
+      "description": "Maintain near fund can old run offer reflect.",
+      "sku": "SKU-7841-XHg",
+      "stockQuantity": 65,
+      "price": 83.87,
+      "categories": [
+        1
+      ],
+      "createdAt": "2025-02-20T19:55:28",
+      "updatedAt": "2025-08-04T20:52:39.843823"
+    },
+    {
+      "title": "Break",
+      "description": "List ball final their explain country.",
+      "sku": "SKU-8740-LHG",
+      "stockQuantity": 94,
+      "price": 170.64,
+      "categories": [
+        4
+      ],
+      "createdAt": "2025-01-28T07:27:02",
+      "updatedAt": "2025-08-04T20:52:39.843964"
+    }
+  ],
+  "orders": [
+    {
+      "buyerId": 5,
+      "shippingAddress": "06307 Williams Park\nKimberlymouth, OH 54487",
+      "billingAddress": "1176 Jackson Light\nLake Laurie, ID 93471",
+      "status": "SHIPPED",
+      "createdAt": "2025-01-28T05:22:30"
+    },
+    {
+      "buyerId": 1,
+      "shippingAddress": "437 Donald Island Suite 949\nNorth Olivia, HI 92409",
+      "billingAddress": "2903 Gomez Greens Suite 530\nNew Jaredbury, IA 99536",
+      "status": "PAID",
+      "createdAt": "2025-06-27T18:43:52"
+    },
+    {
+      "buyerId": 2,
+      "shippingAddress": "10699 Mccall Pass\nNorth Wendy, PA 10017",
+      "billingAddress": "816 Steven Rapid\nLake Derrick, FL 10290",
+      "status": "SHIPPED",
+      "createdAt": "2025-08-03T04:26:49"
+    },
+    {
+      "buyerId": 1,
+      "shippingAddress": "38983 Brenda Mews Apt. 116\nTaraton, MS 63700",
+      "billingAddress": "46822 Martinez Harbor\nEast Melanieland, NE 04310",
+      "status": "PAID",
+      "createdAt": "2025-04-26T01:45:26"
+    },
+    {
+      "buyerId": 3,
+      "shippingAddress": "899 Tyrone Canyon\nNew Regina, MT 40930",
+      "billingAddress": "USNV Lowe\nFPO AP 43099",
+      "status": "SHIPPED",
+      "createdAt": "2025-07-06T09:20:51"
+    }
+  ],
+  "orderItems": [
+    {
+      "orderId": 4,
+      "productId": 6,
+      "quantity": 3,
+      "price": 56.06
+    },
+    {
+      "orderId": 2,
+      "productId": 2,
+      "quantity": 1,
+      "price": 227.83
+    },
+    {
+      "orderId": 3,
+      "productId": 3,
+      "quantity": 2,
+      "price": 211.24
+    },
+    {
+      "orderId": 3,
+      "productId": 8,
+      "quantity": 1,
+      "price": 188.58
+    },
+    {
+      "orderId": 1,
+      "productId": 6,
+      "quantity": 5,
+      "price": 10.27
+    },
+    {
+      "orderId": 5,
+      "productId": 1,
+      "quantity": 5,
+      "price": 244.22
+    },
+    {
+      "orderId": 2,
+      "productId": 5,
+      "quantity": 3,
+      "price": 111.74
+    },
+    {
+      "orderId": 4,
+      "productId": 2,
+      "quantity": 3,
+      "price": 170.69
+    },
+    {
+      "orderId": 3,
+      "productId": 10,
+      "quantity": 1,
+      "price": 91.91
+    },
+    {
+      "orderId": 1,
+      "productId": 5,
+      "quantity": 4,
+      "price": 111.1
+    }
+  ],
+  "deliveries": [
+    {
+      "productId": 4,
+      "quantity": 19,
+      "deliveredAt": "2025-04-27T13:58:33",
+      "note": "Guy team catch also one."
+    },
+    {
+      "productId": 8,
+      "quantity": 20,
+      "deliveredAt": "2025-02-20T04:16:51",
+      "note": "Very sense there one."
+    },
+    {
+      "productId": 7,
+      "quantity": 17,
+      "deliveredAt": "2025-01-06T05:33:37",
+      "note": "Face outside put pass social."
+    },
+    {
+      "productId": 2,
+      "quantity": 6,
+      "deliveredAt": "2025-06-19T22:06:09",
+      "note": "Bank give fill collection."
+    },
+    {
+      "productId": 6,
+      "quantity": 11,
+      "deliveredAt": "2025-07-02T09:28:39",
+      "note": "Election TV same reveal land national."
+    }
+  ]
+}

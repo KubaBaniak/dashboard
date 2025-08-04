@@ -21,6 +21,9 @@
     "prisma:generate": "npx prisma generate",
     "migrate": "npx prisma migrate dev"
   },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "dependencies": {
     "@nestjs/cache-manager": "3.0.1",
     "@nestjs/common": "11.0.1",
