@@ -39,4 +39,10 @@ export class CategoriesService {
 
     return this.categoriesRepository.deleteCategory(categoryId);
   }
+
+  async validateMultipleCategories(categoryIds: number[]): Promise<boolean> {
+    const count = await this.categoriesRepository.countCategoriesById(categoryIds);
+
+    return count === categoryIds.length;
+  }
 }

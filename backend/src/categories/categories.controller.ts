@@ -1,13 +1,17 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, UseGuards } from "@nestjs/common";
 import { JwtAuthGuard } from "src/auth/guards/jwt-guard";
 import { CreateCategoryDto } from "./dto/create-category.dto";
-import { Category } from "@prisma/client";
+import { Category, Product } from "@prisma/client";
 import { CategoriesService } from "./categories.service";
 import { UpdateCategoryDto } from "./dto/update-category.dto";
+import { ProductsService } from "../products/products.service";
 
 @Controller("categories")
 export class CategoriesController {
-  constructor(private readonly categoriesService: CategoriesService) {}
+  constructor(
+    private readonly categoriesService: CategoriesService,
+    private readonly productsService: ProductsService,
+  ) {}
 
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(JwtAuthGuard)
@@ -42,5 +46,12 @@ export class CategoriesController {
   @Delete("/:id")
   deleteCategory(@Param("id") categoryId: string): Promise<Category> {
     return this.categoriesService.deleteCategory(+categoryId);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  @Get("/:id/products")
+  getProductsByCategory(@Param("id") categoryId: string): Promise<Product[]> {
+    return this.productsService.getProductsByCategoryId(+categoryId);
   }
 }

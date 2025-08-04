@@ -8,9 +8,7 @@ export class CategoriesRepository {
   constructor(private prismaService: PrismaService) {}
 
   createCategory(data: { name: string; description?: string }): Promise<Category> {
-    return this.prismaService.category.create({
-      data,
-    });
+    return this.prismaService.category.create({ data });
   }
 
   getAllCategories(): Promise<Category[]> {
@@ -33,6 +31,14 @@ export class CategoriesRepository {
   deleteCategory(categoryId: number): Promise<Category> {
     return this.prismaService.category.delete({
       where: { id: categoryId },
+    });
+  }
+
+  countCategoriesById(categoryIds: number[]): Promise<number> {
+    return this.prismaService.category.count({
+      where: {
+        id: { in: categoryIds },
+      },
     });
   }
 }

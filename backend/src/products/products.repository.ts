@@ -8,7 +8,8 @@ export class ProductsRepository {
   constructor(private prismaService: PrismaService) {}
 
   createProduct(data: CreateProductDto): Promise<Product> {
-    const { title, description, sku, stockQuantity, price } = data;
+    const { title, description, sku, stockQuantity, price, categoryIds } = data;
+
     return this.prismaService.product.create({
       data: {
         title,
@@ -16,6 +17,9 @@ export class ProductsRepository {
         sku,
         stockQuantity,
         price,
+        categories: {
+          connect: categoryIds?.map(id => ({ id })),
+        },
       },
     });
   }
@@ -46,5 +50,17 @@ export class ProductsRepository {
 
   deleteProduct(productId: number): Promise<Product> {
     return this.prismaService.product.delete({ where: { id: productId } });
+  }
+
+  getProductsByCategoryId(categoryId: number): Promise<Product[]> {
+    return this.prismaService.product.findMany({
+      where: {
+        categories: {
+          some: {
+            id: categoryId,
+          },
+        },
+      },
+    });
   }
 }
