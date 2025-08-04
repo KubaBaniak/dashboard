@@ -1,13 +1,13 @@
-import { IsInt, Min } from "class-validator";
+import { IsInt, IsNumber, IsOptional, IsPositive } from "class-validator";
 
 export class UpdateOrderItemDto {
+  @IsOptional()
   @IsInt()
-  productId: number;
+  @IsPositive()
+  quantity?: number;
 
-  @IsInt()
-  @Min(1)
-  quantity: number;
-
-  @IsInt()
-  price: number;
+  @IsOptional()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @IsPositive()
+  price?: number;
 }

@@ -11,7 +11,7 @@ export class OrdersService {
     private readonly ordersRepository: OrdersRepository,
     private readonly clientsService: ClientsService,
   ) {}
-
+  categories;
   async createOrder(data: CreateOrderDto): Promise<Order> {
     const client = await this.clientsService.getClientById(data.buyerId);
 

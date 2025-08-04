@@ -4,6 +4,7 @@ import { CreateOrderDto } from "./dto/create-order.dto";
 import { JwtAuthGuard } from "../auth/guards/jwt-guard";
 import { Order } from "@prisma/client";
 import { UpdateOrderStatusDto } from "./dto/update-order-status.dto";
+import { UpdateOrderDto } from "./dto/update-order.dto";
 
 @Controller("orders")
 @UseGuards(JwtAuthGuard)
@@ -28,10 +29,16 @@ export class OrdersController {
     return this.ordersService.getOrderById(+id);
   }
 
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   @Delete(":id")
   deleteOrder(@Param("id") id: string): Promise<Order> {
     return this.ordersService.deleteOrder(+id);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Patch(":id")
+  updateOrder(@Param("id") id: string, @Body() dto: UpdateOrderDto): Promise<Order> {
+    return this.ordersService.updateOrder(+id, dto);
   }
 
   @HttpCode(HttpStatus.OK)
