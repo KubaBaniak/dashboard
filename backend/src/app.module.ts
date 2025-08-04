@@ -7,6 +7,7 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { CacheModule } from "@nestjs/cache-manager";
 import { ClientsModule } from "./clients/clients.module";
 import { ProductsModule } from "./products/products.module";
+import { CategoriesModule } from './categories/categories.module';
 import * as redisStore from "cache-manager-redis-store";
 
 @Module({
@@ -26,6 +27,7 @@ import * as redisStore from "cache-manager-redis-store";
     }),
     ClientsModule,
     ProductsModule,
+    CategoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
