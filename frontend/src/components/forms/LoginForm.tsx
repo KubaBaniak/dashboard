@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -57,12 +56,10 @@ export default function LoginPreview() {
       );
 
       await queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
-      router.push("/dashboard");
-
-      toast.success("Zalogowano pomyślnie");
+      router.push("/dashboard?loginSuccess=true");
     } catch (error) {
       console.error("Form submission error", error);
-      toast.error("Nieprawidłowy email lub hasło");
+      toast.error("Something went wrong - try again later");
     }
   }
 
