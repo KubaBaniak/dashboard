@@ -16,13 +16,18 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const userRole = user?.role === "ADMIN" ? "ADMIN" : "USER";
 
   if (isLoading) {
-    return <main className="flex-1">{children}</main>;
+    return (
+      <main className="min-h-screen flex items-center justify-center">
+        {children}
+      </main>
+    );
   }
 
   return (
-    <div className="flex">
+    <div className="flex min-h-screen w-full">
       {isLoggedIn && !isHiddenRoute && <AppSidebar userRole={userRole} />}
-      <main className="flex-1">{children}</main>
+
+      <main className="flex-1 p-6 max-w-5xl mx-auto w-full">{children}</main>
     </div>
   );
 }

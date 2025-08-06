@@ -11,10 +11,14 @@ import { JwtPayload } from "./types/jwt-payload.type";
 import { RefreshGuard } from "./guards/refresh-guard";
 import { JwtPayloadWithRefreshToken } from "./types/jwt-payload-refresh-token.type";
 import { Response } from "express";
+import { UsersService } from "../users/users.service";
 
 @Controller("auth")
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly usersService: UsersService,
+  ) {}
 
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
@@ -65,9 +69,13 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   @Get("me")
-  getMe(@Req() req: Request & { user: JwtPayload }): { id: number; role: string } {
-    const { sub, role } = req.user;
-    return { id: sub, role };
+  async getMe(@Req() req: Request & { user: JwtPayload }): Promise<Omit<User, "password" | "refreshToken"> | null> {
+    const currentUser = await this.usersService.findUserById(req.user.sub);
+
+    if (!currentUser) return null;
+
+    const { password, refreshToken, ...safeUser } = currentUser;
+    return safeUser;
   }
 
   @HttpCode(HttpStatus.OK)

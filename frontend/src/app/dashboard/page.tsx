@@ -7,15 +7,15 @@ import { useEffect } from "react";
 import { toast } from "sonner";
 
 export default function DashboardPage() {
-  const { data, isLoading } = useAuth();
+  const { data: user, isLoading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (!isLoading && !data) {
+    if (!isLoading && !user) {
       router.push("/auth/login");
     }
-  }, [router, isLoading, data]);
+  }, [isLoading, user, router]);
 
   useEffect(() => {
     const loginSuccess = searchParams.get("loginSuccess");
@@ -29,15 +29,21 @@ export default function DashboardPage() {
       const newPath = `/dashboard${
         newParams.toString() ? `?${newParams.toString()}` : ""
       }`;
+
       router.replace(newPath);
     }
   }, [searchParams, router]);
 
-  if (isLoading) return <CenteredSpinner />;
+  if (isLoading || !user) return <CenteredSpinner />;
 
   return (
-    <div>
-      Welcome, user #{data?.id} ({data?.role})!
+    <div className="p-6 space-y-4">
+      <h1 className="text-2xl font-bold">Welcome to your Dashboard</h1>
+      <p className="text-muted-foreground">
+        Hello <strong>{user.name ?? user.email}</strong>! <br />
+        Your role is:{" "}
+        <span className="capitalize font-medium">{user.role}</span>
+      </p>
     </div>
   );
 }

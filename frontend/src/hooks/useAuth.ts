@@ -3,7 +3,9 @@ import axios from "axios";
 
 type PlainUser = {
   id: string;
-  role?: string;
+  email: string;
+  role: string;
+  name?: string;
 };
 
 async function fetchUser(): Promise<PlainUser | null> {
@@ -17,7 +19,9 @@ async function fetchUser(): Promise<PlainUser | null> {
 
     return {
       id: data.id,
+      email: data.email,
       role: data.role,
+      name: data.name,
     };
   } catch (err) {
     return null;
@@ -34,5 +38,7 @@ export function useAuth() {
     data,
     isLoading,
     error,
+    isAuthenticated: !!data,
+    isAdmin: data?.role === "ADMIN",
   };
 }
