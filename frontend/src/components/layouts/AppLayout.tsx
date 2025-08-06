@@ -27,7 +27,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-screen w-full">
       {isLoggedIn && !isHiddenRoute && <AppSidebar userRole={userRole} />}
 
-      <main className="flex-1 p-6 max-w-5xl mx-auto w-full">{children}</main>
+      <main className="flex-1 p-6 max-w-8xl mx-auto w-full">{children}</main>
     </div>
   );
 }

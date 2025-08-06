@@ -8,6 +8,9 @@ import { useAuth } from "@/hooks/useAuth";
 import CenteredSpinner from "@/components/utils/CenteredSpinner";
 
 import { SiteHeader } from "@/components/ui/site-header";
+import { SectionCards } from "@/components/dashboard/SectionCards";
+import { RecentOrdersTable } from "@/components/dashboard/RecentOrdersTable";
+import { ClientSummaryCards } from "@/components/dashboard/ClientSummaryCards";
 
 export default function DashboardPage() {
   const { data: user, isLoading } = useAuth();
@@ -42,20 +45,25 @@ export default function DashboardPage() {
   return (
     <>
       <SiteHeader />
-      <div className="flex-1 flex flex-col">
-        <div className="w-full px-4 lg:px-8 py-6">
-          <div className="max-w-screen-xl mx-auto space-y-6">
-            <div className="space-y-2">
-              <h1 className="text-2xl font-bold">Welcome to your Dashboard</h1>
-              <p className="text-muted-foreground">
-                Hello <strong>{user.name ?? user.email}</strong>! <br />
-                Your role is:{" "}
-                <span className="capitalize font-medium">{user.role}</span>
-              </p>
-            </div>
+      <div className="flex-1 flex flex-col px-4 lg:px-6 py-6">
+        <div className="@container/main w-full max-w-screen-2xl mx-auto space-y-6">
+          <div className="space-y-2">
+            <h1 className="text-2xl font-bold">Welcome to your Dashboard</h1>
+            <p className="text-muted-foreground">
+              Hello <strong>{user.name ?? user.email}</strong>! <br />
+              Your role is:{" "}
+              <span className="capitalize font-medium">{user.role}</span>
+            </p>
+          </div>
 
-            <div className="rounded-md border border-dashed p-8 text-muted-foreground text-center">
-              This is where your dashboard widgets will go.
+          <SectionCards />
+
+          <div className="flex flex-col lg:flex-row gap-4">
+            <div className="w-full lg:w-1/2">
+              <RecentOrdersTable />
+            </div>
+            <div className="w-full lg:w-1/2">
+              <ClientSummaryCards />
             </div>
           </div>
         </div>
