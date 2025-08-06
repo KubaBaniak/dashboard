@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 import { useAuth } from "@/hooks/useAuth";
 import CenteredSpinner from "@/components/utils/CenteredSpinner";
@@ -15,30 +14,12 @@ import { ClientSummaryCards } from "@/components/dashboard/ClientSummaryCards";
 export default function DashboardPage() {
   const { data: user, isLoading } = useAuth();
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   useEffect(() => {
     if (!isLoading && !user) {
       router.push("/auth/login");
     }
   }, [isLoading, user, router]);
-
-  useEffect(() => {
-    const loginSuccess = searchParams.get("loginSuccess");
-
-    if (loginSuccess === "true") {
-      toast.success("Successfully logged in");
-
-      const newParams = new URLSearchParams(searchParams.toString());
-      newParams.delete("loginSuccess");
-
-      const newPath = `/dashboard${
-        newParams.toString() ? `?${newParams.toString()}` : ""
-      }`;
-
-      router.replace(newPath);
-    }
-  }, [searchParams, router]);
 
   if (isLoading || !user) return <CenteredSpinner />;
 

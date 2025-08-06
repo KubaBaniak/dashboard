@@ -1,6 +1,10 @@
 "use client";
 
 import { type Icon } from "@tabler/icons-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import clsx from "clsx";
+
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -8,8 +12,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { usePathname } from "next/navigation";
-import clsx from "clsx"; // Optional: If you use `clsx` for cleaner classNames
 
 export function NavMain({
   items,
@@ -31,22 +33,27 @@ export function NavMain({
 
             return (
               <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton
-                  tooltip={item.title}
-                  className={clsx(
-                    "flex items-center gap-2 px-3 py-2 rounded-md transition-colors cursor-pointer",
-                    isActive
-                      ? "bg-muted text-primary font-semibold shadow-sm"
-                      : "text-muted-foreground hover:bg-muted/50",
-                  )}
-                >
-                  {item.icon && (
-                    <item.icon
-                      className={clsx(isActive ? "text-primary" : "text-muted")}
-                    />
-                  )}
-                  <span>{item.title}</span>
-                </SidebarMenuButton>
+                <Link href={item.url} passHref>
+                  <SidebarMenuButton
+                    tooltip={item.title}
+                    className={clsx(
+                      "flex items-center gap-2 px-3 py-2 rounded-md transition-colors cursor-pointer",
+                      isActive
+                        ? "bg-muted text-primary font-semibold shadow-sm"
+                        : "text-muted-foreground hover:bg-muted/50",
+                    )}
+                  >
+                    {item.icon && (
+                      <item.icon
+                        className={clsx(
+                          "h-5 w-5",
+                          isActive ? "text-primary" : "text-muted",
+                        )}
+                      />
+                    )}
+                    <span>{item.title}</span>
+                  </SidebarMenuButton>
+                </Link>
               </SidebarMenuItem>
             );
           })}
