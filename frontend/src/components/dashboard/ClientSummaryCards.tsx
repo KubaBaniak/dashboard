@@ -57,7 +57,7 @@ const topClients = [
 
 export function ClientSummaryCards() {
   return (
-    <div className="space-y-10">
+    <div className="space-y-10 flex flex-col justify-evenly h-full">
       <section className="space-y-4">
         <h2 className="text-xl font-bold tracking-tight">🆕 Latest Clients</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
