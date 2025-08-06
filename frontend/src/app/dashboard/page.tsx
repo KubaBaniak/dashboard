@@ -1,10 +1,13 @@
 "use client";
 
-import CenteredSpinner from "@/components/utils/CenteredSpinner";
-import { useAuth } from "@/hooks/useAuth";
-import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
+
+import { useAuth } from "@/hooks/useAuth";
+import CenteredSpinner from "@/components/utils/CenteredSpinner";
+
+import { SiteHeader } from "@/components/ui/site-header";
 
 export default function DashboardPage() {
   const { data: user, isLoading } = useAuth();
@@ -37,13 +40,26 @@ export default function DashboardPage() {
   if (isLoading || !user) return <CenteredSpinner />;
 
   return (
-    <div className="p-6 space-y-4">
-      <h1 className="text-2xl font-bold">Welcome to your Dashboard</h1>
-      <p className="text-muted-foreground">
-        Hello <strong>{user.name ?? user.email}</strong>! <br />
-        Your role is:{" "}
-        <span className="capitalize font-medium">{user.role}</span>
-      </p>
-    </div>
+    <>
+      <SiteHeader />
+      <div className="flex-1 flex flex-col">
+        <div className="w-full px-4 lg:px-8 py-6">
+          <div className="max-w-screen-xl mx-auto space-y-6">
+            <div className="space-y-2">
+              <h1 className="text-2xl font-bold">Welcome to your Dashboard</h1>
+              <p className="text-muted-foreground">
+                Hello <strong>{user.name ?? user.email}</strong>! <br />
+                Your role is:{" "}
+                <span className="capitalize font-medium">{user.role}</span>
+              </p>
+            </div>
+
+            <div className="rounded-md border border-dashed p-8 text-muted-foreground text-center">
+              This is where your dashboard widgets will go.
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
