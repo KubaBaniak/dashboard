@@ -4,6 +4,8 @@ import { OrdersRepository } from "./orders.repository";
 import { CreateOrderDto } from "./dto/create-order.dto";
 import { UpdateOrderDto } from "./dto/update-order.dto";
 import { ClientsService } from "../clients/clients.service";
+import { ListOrdersQueryDto } from "./dto/list-orders.dto";
+import { PaginatedOrders } from "./dto/return-orders.dto";
 
 @Injectable()
 export class OrdersService {
@@ -11,7 +13,6 @@ export class OrdersService {
     private readonly ordersRepository: OrdersRepository,
     private readonly clientsService: ClientsService,
   ) {}
-  categories;
   async createOrder(data: CreateOrderDto): Promise<Order> {
     const client = await this.clientsService.getClientById(data.buyerId);
 
@@ -19,12 +20,11 @@ export class OrdersService {
       throw new NotFoundException("CLIENT WITH SUCH ID DOES NOT EXISTS");
     }
 
-    // Optional: validate products exist, etc.
     return this.ordersRepository.createOrder(data);
   }
 
-  getAllOrders(): Promise<Order[]> {
-    return this.ordersRepository.getAllOrders();
+  getAllOrders(query: ListOrdersQueryDto): Promise<PaginatedOrders> {
+    return this.ordersRepository.listOrders(query);
   }
 
   getOrderById(orderId: number): Promise<Order | null> {

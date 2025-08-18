@@ -7,9 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import CenteredSpinner from "@/components/utils/CenteredSpinner";
 
 import { SiteHeader } from "@/components/ui/site-header";
-import { SectionCards } from "@/components/dashboard/SectionCards";
-import { RecentOrdersTable } from "@/components/dashboard/RecentOrdersTable";
-import { ClientSummaryCards } from "@/components/dashboard/ClientSummaryCards";
+import OrdersTable from "@/components/orders/OrdersTable";
 
 export default function DashboardPage() {
   const { data: user, isLoading } = useAuth();
@@ -28,16 +26,7 @@ export default function DashboardPage() {
       <SiteHeader user={user} />
       <div className="flex-1 flex flex-col px-4 lg:px-6 py-6">
         <div className="@container/main w-full max-w-screen-2xl mx-auto space-y-6">
-          <SectionCards />
-
-          <div className="flex flex-col lg:flex-row gap-4">
-            <div className="w-full lg:w-1/2">
-              <RecentOrdersTable />
-            </div>
-            <div className="w-full lg:w-1/2">
-              <ClientSummaryCards />
-            </div>
-          </div>
+          <OrdersTable />
         </div>
       </div>
     </>

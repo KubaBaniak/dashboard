@@ -1,10 +1,24 @@
-import { Body, Controller, Get, Param, Post, Patch, Delete, HttpCode, HttpStatus, UseGuards } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Patch,
+  Delete,
+  HttpCode,
+  HttpStatus,
+  UseGuards,
+  Query,
+} from "@nestjs/common";
 import { OrdersService } from "./orders.service";
 import { CreateOrderDto } from "./dto/create-order.dto";
 import { JwtAuthGuard } from "../auth/guards/jwt-guard";
 import { Order } from "@prisma/client";
 import { UpdateOrderStatusDto } from "./dto/update-order-status.dto";
 import { UpdateOrderDto } from "./dto/update-order.dto";
+import { ListOrdersQueryDto } from "./dto/list-orders.dto";
+import { PaginatedOrders } from "./dto/return-orders.dto";
 
 @Controller("orders")
 @UseGuards(JwtAuthGuard)
@@ -19,8 +33,8 @@ export class OrdersController {
 
   @HttpCode(HttpStatus.OK)
   @Get()
-  getAllOrders(): Promise<Order[]> {
-    return this.ordersService.getAllOrders();
+  getAllOrders(@Query() query: ListOrdersQueryDto): Promise<PaginatedOrders> {
+    return this.ordersService.getAllOrders(query);
   }
 
   @HttpCode(HttpStatus.OK)
