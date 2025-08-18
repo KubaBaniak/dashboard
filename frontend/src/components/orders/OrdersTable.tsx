@@ -1,5 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
-import { OrdersResponse } from "./types";
 import { useState } from "react";
 import OrdersToolbar from "./Toolbar";
 import {
@@ -24,7 +22,7 @@ export default function OrdersTable() {
   const [q, setQ] = useState("");
   const [status, setStatus] = useState("ALL");
 
-  const { data, isLoading, isError } = useOrders({
+  const { data, isLoading, isError, refetch } = useOrders({
     page,
     pageSize,
     q,

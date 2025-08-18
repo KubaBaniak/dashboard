@@ -7,9 +7,10 @@ import { useAuth } from "@/hooks/useAuth";
 import CenteredSpinner from "@/components/utils/CenteredSpinner";
 
 import { SiteHeader } from "@/components/ui/site-header";
-import OrdersTable from "@/components/orders/OrdersTable";
+import ProductsTable from "@/components/products/ProductsTable";
+import CreateProductDialog from "@/components/products/CreateProductDialog";
 
-export default function OrdersPage() {
+export default function ProductsPage() {
   const { data: user, isLoading } = useAuth();
   const router = useRouter();
 
@@ -26,7 +27,8 @@ export default function OrdersPage() {
       <SiteHeader user={user} />
       <div className="flex-1 flex flex-col px-4 lg:px-6 py-6">
         <div className="@container/main w-full max-w-screen-2xl mx-auto space-y-6">
-          <OrdersTable />
+          <CreateProductDialog />
+          <ProductsTable />
         </div>
       </div>
     </>

@@ -4,6 +4,9 @@ import { CreateProductDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
 import { Prisma, Product } from "@prisma/client";
 import { CategoriesService } from "../categories/categories.service";
+import { ListProductsQueryDto } from "./dto/list-products.dto";
+import { PaginatedProductsDto } from "./dto/paginated-products.dto";
+import { ProductRowDto } from "./dto/product-row.dto";
 
 @Injectable()
 export class ProductsService {
@@ -27,8 +30,36 @@ export class ProductsService {
     return this.productsRepository.createProduct(data);
   }
 
-  getAllProducts(): Promise<Product[] | null> {
-    return this.productsRepository.getAllProducts();
+  async listProducts(query: ListProductsQueryDto): Promise<PaginatedProductsDto> {
+    const page = Math.max(1, Number(query.page) || 1);
+    const pageSize = Math.min(100, Math.max(1, Number(query.pageSize) || 10));
+    const q = (query.q ?? "").trim();
+    const categoryId = query.categoryId;
+
+    const where: Prisma.ProductWhereInput = {};
+    if (q) {
+      where.OR = [
+        { title: { contains: q, mode: "insensitive" } },
+        { sku: { contains: q, mode: "insensitive" } },
+        { categories: { some: { name: { contains: q, mode: "insensitive" } } } },
+      ];
+    }
+    if (categoryId) where.categories = { some: { id: categoryId } };
+
+    const { total, rows } = await this.productsRepository.queryProducts(where, page, pageSize);
+
+    const data = rows.map(p => ({
+      id: p.id,
+      title: p.title,
+      sku: p.sku,
+      stockQuantity: p.stockQuantity,
+      price: p.price.toFixed(2),
+      categories: p.categories,
+      createdAt: p.createdAt,
+      updatedAt: p.updatedAt,
+    }));
+
+    return { data, page, pageSize, total };
   }
 
   getProductBySku(sku: string): Promise<Product | null> {

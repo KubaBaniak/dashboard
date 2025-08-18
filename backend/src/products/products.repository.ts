@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../database/prisma.service";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { Prisma, Product } from "@prisma/client";
+import { QueryProductsResult } from "./types/productsWithCategories";
 
 @Injectable()
 export class ProductsRepository {
@@ -32,8 +33,18 @@ export class ProductsRepository {
     return this.prismaService.product.findMany({ where: { title } });
   }
 
-  getAllProducts(): Promise<Product[] | null> {
-    return this.prismaService.product.findMany();
+  async queryProducts(where: Prisma.ProductWhereInput, page: number, pageSize: number): Promise<QueryProductsResult> {
+    const [total, rows] = await Promise.all([
+      this.prismaService.product.count({ where }),
+      this.prismaService.product.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        include: { categories: { select: { id: true, name: true } } },
+      }),
+    ]);
+    return { total, rows };
   }
 
   getProductById(id: number): Promise<Product | null> {

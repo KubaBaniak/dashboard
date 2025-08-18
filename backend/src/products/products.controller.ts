@@ -1,9 +1,24 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, UseGuards } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from "@nestjs/common";
 import { ProductsService } from "./products.service";
 import { JwtAuthGuard } from "src/auth/guards/jwt-guard";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { Product } from "@prisma/client";
 import { UpdateProductDto } from "./dto/update-product.dto";
+import { ListProductsQueryDto } from "./dto/list-products.dto";
+import { PaginatedProductsDto } from "./dto/paginated-products.dto";
+import { plainToInstance } from "class-transformer";
 
 @Controller("products")
 export class ProductsController {
@@ -19,8 +34,9 @@ export class ProductsController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   @Get()
-  getAllProducts(): Promise<Product[] | null> {
-    return this.productsService.getAllProducts();
+  async getAllProducts(@Query() query: ListProductsQueryDto): Promise<PaginatedProductsDto> {
+    const result = await this.productsService.listProducts(query);
+    return plainToInstance(PaginatedProductsDto, result, { excludeExtraneousValues: true });
   }
 
   @HttpCode(HttpStatus.OK)
