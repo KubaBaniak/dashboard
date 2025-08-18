@@ -18,7 +18,8 @@ import { Order } from "@prisma/client";
 import { UpdateOrderStatusDto } from "./dto/update-order-status.dto";
 import { UpdateOrderDto } from "./dto/update-order.dto";
 import { ListOrdersQueryDto } from "./dto/list-orders.dto";
-import { PaginatedOrders } from "./dto/return-orders.dto";
+import { PagedResponse } from "src/common/dto/paged-response.dto";
+import { OrderRowDto } from "./dto/order-row.dto";
 
 @Controller("orders")
 @UseGuards(JwtAuthGuard)
@@ -33,7 +34,7 @@ export class OrdersController {
 
   @HttpCode(HttpStatus.OK)
   @Get()
-  getAllOrders(@Query() query: ListOrdersQueryDto): Promise<PaginatedOrders> {
+  getAllOrders(@Query() query: ListOrdersQueryDto): Promise<PagedResponse<OrderRowDto>> {
     return this.ordersService.getAllOrders(query);
   }
 

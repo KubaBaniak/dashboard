@@ -5,7 +5,7 @@ import { UpdateProductDto } from "./dto/update-product.dto";
 import { Prisma, Product } from "@prisma/client";
 import { CategoriesService } from "../categories/categories.service";
 import { ListProductsQueryDto } from "./dto/list-products.dto";
-import { PaginatedProductsDto } from "./dto/paginated-products.dto";
+import { PagedResponse } from "src/common/dto/paged-response.dto";
 import { ProductRowDto } from "./dto/product-row.dto";
 
 @Injectable()
@@ -30,7 +30,7 @@ export class ProductsService {
     return this.productsRepository.createProduct(data);
   }
 
-  async listProducts(query: ListProductsQueryDto): Promise<PaginatedProductsDto> {
+  async listProducts(query: ListProductsQueryDto): Promise<PagedResponse<ProductRowDto>> {
     const page = Math.max(1, Number(query.page) || 1);
     const pageSize = Math.min(100, Math.max(1, Number(query.pageSize) || 10));
     const q = (query.q ?? "").trim();

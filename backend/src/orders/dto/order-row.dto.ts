@@ -9,10 +9,3 @@ export type OrderRowDto = {
   itemCount: number;
   totalAmount: string;
 };
-
-export type PaginatedOrders = {
-  data: OrderRowDto[];
-  page: number;
-  pageSize: number;
-  total: number;
-};

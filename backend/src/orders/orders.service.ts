@@ -5,7 +5,8 @@ import { CreateOrderDto } from "./dto/create-order.dto";
 import { UpdateOrderDto } from "./dto/update-order.dto";
 import { ClientsService } from "../clients/clients.service";
 import { ListOrdersQueryDto } from "./dto/list-orders.dto";
-import { PaginatedOrders } from "./dto/return-orders.dto";
+import { PagedResponse } from "src/common/dto/paged-response.dto";
+import { OrderRowDto } from "./dto/order-row.dto";
 
 @Injectable()
 export class OrdersService {
@@ -23,7 +24,7 @@ export class OrdersService {
     return this.ordersRepository.createOrder(data);
   }
 
-  getAllOrders(query: ListOrdersQueryDto): Promise<PaginatedOrders> {
+  getAllOrders(query: ListOrdersQueryDto): Promise<PagedResponse<OrderRowDto>> {
     return this.ordersRepository.listOrders(query);
   }
 

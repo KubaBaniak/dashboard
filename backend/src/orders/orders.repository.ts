@@ -4,7 +4,8 @@ import { Order, OrderStatus, Prisma } from "@prisma/client";
 import { CreateOrderDto } from "./dto/create-order.dto";
 import { UpdateOrderDto } from "./dto/update-order.dto";
 import { ListOrdersQueryDto } from "./dto/list-orders.dto";
-import { OrderRowDto, PaginatedOrders } from "./dto/return-orders.dto";
+import { OrderRowDto } from "./dto/order-row.dto";
+import { PagedResponse } from "src/common/dto/paged-response.dto";
 
 @Injectable()
 export class OrdersRepository {
@@ -71,7 +72,7 @@ export class OrdersRepository {
     });
   }
 
-  async listOrders(query: ListOrdersQueryDto): Promise<PaginatedOrders> {
+  async listOrders(query: ListOrdersQueryDto): Promise<PagedResponse<OrderRowDto>> {
     const page = Math.max(1, Number(query.page) || 1);
     const pageSize = Math.min(100, Math.max(1, Number(query.pageSize) || 10));
     const q = (query.q ?? "").trim();

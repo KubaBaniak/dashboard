@@ -17,8 +17,8 @@ import { CreateProductDto } from "./dto/create-product.dto";
 import { Product } from "@prisma/client";
 import { UpdateProductDto } from "./dto/update-product.dto";
 import { ListProductsQueryDto } from "./dto/list-products.dto";
-import { PaginatedProductsDto } from "./dto/paginated-products.dto";
-import { plainToInstance } from "class-transformer";
+import { PagedResponse } from "src/common/dto/paged-response.dto";
+import { ProductRowDto } from "./dto/product-row.dto";
 
 @Controller("products")
 export class ProductsController {
@@ -34,9 +34,8 @@ export class ProductsController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   @Get()
-  async getAllProducts(@Query() query: ListProductsQueryDto): Promise<PaginatedProductsDto> {
-    const result = await this.productsService.listProducts(query);
-    return plainToInstance(PaginatedProductsDto, result, { excludeExtraneousValues: true });
+  async getAllProducts(@Query() query: ListProductsQueryDto): Promise<PagedResponse<ProductRowDto>> {
+    return this.productsService.listProducts(query);
   }
 
   @HttpCode(HttpStatus.OK)
