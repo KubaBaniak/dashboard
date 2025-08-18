@@ -15,6 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
+import { Badge } from "../ui/badge";
 
 export default function ProductsTable() {
   const [page, setPage] = useState(1);
@@ -53,6 +54,7 @@ export default function ProductsTable() {
             <TableRow>
               <TableHead className="w-[80px]">ID</TableHead>
               <TableHead>Title</TableHead>
+              <TableHead>Category</TableHead>
               <TableHead>SKU</TableHead>
               <TableHead className="text-right">Stock</TableHead>
               <TableHead className="text-right">Price</TableHead>
@@ -73,6 +75,13 @@ export default function ProductsTable() {
                 <TableRow key={p.id}>
                   <TableCell className="font-medium">{p.id}</TableCell>
                   <TableCell>{p.title}</TableCell>
+                  <TableCell>
+                    {p.categories.map((c) => (
+                      <Badge key={c.id} variant="secondary" className="mr-0.5">
+                        {c.name}
+                      </Badge>
+                    ))}
+                  </TableCell>
                   <TableCell>{p.sku}</TableCell>
                   <TableCell className="text-right">
                     {p.stockQuantity}
@@ -87,6 +96,7 @@ export default function ProductsTable() {
               <TableCell colSpan={3} className="font-semibold">
                 Page {page} of {totalPages}
               </TableCell>
+              <TableCell />
               <TableCell
                 colSpan={2}
                 className="text-right text-sm text-muted-foreground"
