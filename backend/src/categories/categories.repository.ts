@@ -1,7 +1,9 @@
 import { Injectable } from "@nestjs/common";
-import { Category } from "@prisma/client";
+import { Category, Prisma } from "@prisma/client";
 import { PrismaService } from "src/database/prisma.service";
 import { UpdateCategoryDto } from "./dto/update-category.dto";
+import { PagedArgs } from "src/common/dto/paged-args.dto";
+import { CategoryOptionRow, FindPagedResult } from "./types/types";
 
 @Injectable()
 export class CategoriesRepository {
@@ -11,8 +13,37 @@ export class CategoriesRepository {
     return this.prismaService.category.create({ data });
   }
 
-  getAllCategories(): Promise<Category[]> {
-    return this.prismaService.category.findMany();
+  async findPaged({ skip, take, q }: PagedArgs): Promise<FindPagedResult> {
+    const where: Prisma.CategoryWhereInput | undefined = q
+      ? {
+          OR: [{ name: { contains: q, mode: "insensitive" } }, { description: { contains: q, mode: "insensitive" } }],
+        }
+      : undefined;
+
+    const [total, rows] = await this.prismaService.$transaction([
+      this.prismaService.category.count({ where }),
+      this.prismaService.category.findMany({
+        where,
+        skip,
+        take,
+        orderBy: { name: "desc" },
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          _count: { select: { products: true } },
+        },
+      }),
+    ]);
+
+    return { rows, total };
+  }
+
+  async findOptions(): Promise<CategoryOptionRow[]> {
+    return this.prismaService.category.findMany({
+      select: { id: true, name: true },
+      orderBy: { name: "asc" },
+    });
   }
 
   getCategoryById(categoryId: number): Promise<Category | null> {

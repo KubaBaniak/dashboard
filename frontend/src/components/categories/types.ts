@@ -1,0 +1,13 @@
+export type Category = {
+  id: number;
+  name: string;
+  description?: string | null;
+  productCount: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type PagedResponse<T> = {
+  data: T[];
+  total: number;
+};

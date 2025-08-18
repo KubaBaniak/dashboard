@@ -5,7 +5,6 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { useCategories } from "@/hooks/useCategories";
 import { useCreateProduct } from "@/hooks/useCreateProduct";
 import { createProductSchema } from "@/lib/validation-schemas/createProductSchema";
 import { cn } from "@/lib/utils";
@@ -34,6 +33,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Check, ChevronsUpDown, Plus } from "lucide-react";
+import { useCategoryOptions } from "@/hooks/useCategoryOptions";
 
 type FormValues = z.infer<typeof createProductSchema>;
 
@@ -41,7 +41,7 @@ export default function CreateProductDialog() {
   const [open, setOpen] = useState(false);
   const [catOpen, setCatOpen] = useState(false);
 
-  const { data: categories = [], isLoading: catLoading } = useCategories();
+  const { data: categories = [], isLoading: catLoading } = useCategoryOptions();
   const createProduct = useCreateProduct();
 
   const {
@@ -84,7 +84,7 @@ export default function CreateProductDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm">
+        <Button size="sm" className="cursor-pointer">
           <Plus className="mr-2 h-4 w-4" />
           New Product
         </Button>

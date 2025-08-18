@@ -3,11 +3,13 @@ import api from "@/lib/api";
 
 export type CategoryOption = { id: number; name: string };
 
-export function useCategories() {
+export function useCategoryOptions() {
   return useQuery<CategoryOption[]>({
-    queryKey: ["categories"],
+    queryKey: ["categoryOptions"],
     queryFn: async () => {
-      const res = await api.get("/categories", { withCredentials: true });
+      const res = await api.get("/categories/options", {
+        withCredentials: true,
+      });
       const payload = res.data;
       if (Array.isArray(payload)) return payload as CategoryOption[];
       return (payload?.data ?? []) as CategoryOption[];

@@ -9,7 +9,6 @@ type UseProductsArgs = {
   categoryId?: number;
 };
 
-// useProducts.ts
 export function useProducts({
   page,
   pageSize,
@@ -27,10 +26,9 @@ export function useProducts({
           ...(categoryId ? { categoryId } : {}),
         },
       });
-      console.log(data);
       return data;
     },
     staleTime: 30_000,
-    placeholderData: { data: [], page, pageSize, total: 0 }, // 👈 always defined
+    placeholderData: { data: [], page, pageSize, total: 0 },
   });
 }

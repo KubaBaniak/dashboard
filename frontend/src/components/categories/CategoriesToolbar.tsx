@@ -1,4 +1,5 @@
 "use client";
+
 import React from "react";
 import { Input } from "@/components/ui/input";
 import {
@@ -8,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import CreateProductDialog from "./CreateProductDialog";
+import CreateCategoryDialog from "./CreateCategoryDialog";
 
 interface ToolbarProps {
   pageSize: number;
@@ -17,7 +18,7 @@ interface ToolbarProps {
   onQueryChange: (s: string) => void;
 }
 
-export default function ProductsToolbar({
+export default function CategoriesToolbar({
   pageSize,
   onPageSizeChange,
   query,
@@ -26,11 +27,12 @@ export default function ProductsToolbar({
   return (
     <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <h2 className="text-lg font-semibold">Products</h2>
+        <h2 className="text-lg font-semibold">Categories</h2>
         <p className="text-sm text-muted-foreground">
-          Browse and manage your products.
+          Browse and manage your categories.
         </p>
       </div>
+
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground">Show</span>
@@ -50,13 +52,15 @@ export default function ProductsToolbar({
             </SelectContent>
           </Select>
         </div>
+
         <Input
-          placeholder="Search by title, SKU or category…"
+          placeholder="Search by name or description…"
           value={query}
           onChange={(e) => onQueryChange(e.target.value)}
           className="w-full sm:w-[280px]"
         />
-        <CreateProductDialog />
+
+        <CreateCategoryDialog />
       </div>
     </div>
   );
