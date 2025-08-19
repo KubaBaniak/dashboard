@@ -6,8 +6,3 @@ export type Category = {
   createdAt: string;
   updatedAt: string;
 };
-
-export type PagedResponse<T> = {
-  data: T[];
-  total: number;
-};

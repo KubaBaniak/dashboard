@@ -5,7 +5,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { useCreateProduct } from "@/hooks/useCreateProduct";
+import { useCreateProduct } from "@/hooks/products/useCreateProduct";
 import { createProductSchema } from "@/lib/validation-schemas/createProductSchema";
 import { cn } from "@/lib/utils";
 
@@ -33,7 +33,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Check, ChevronsUpDown, Plus } from "lucide-react";
-import { useCategoryOptions } from "@/hooks/useCategoryOptions";
+import { useCategoryOptions } from "@/hooks/categories/useCategoryOptions";
 
 type FormValues = z.infer<typeof createProductSchema>;
 
@@ -67,9 +67,13 @@ export default function CreateProductDialog() {
   const selectedIds = watch("categoryIds");
 
   function toggleCategory(id: number) {
-    const set = new Set(selectedIds);
-    set.has(id) ? set.delete(id) : set.add(id);
-    setValue("categoryIds", Array.from(set), {
+    const next = new Set(selectedIds);
+    if (next.has(id)) {
+      next.delete(id);
+    } else {
+      next.add(id);
+    }
+    setValue("categoryIds", Array.from(next), {
       shouldValidate: true,
       shouldDirty: true,
     });

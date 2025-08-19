@@ -8,9 +8,6 @@ import {
   IconPackage,
   IconCategory,
   IconTruckDelivery,
-  IconSettings,
-  IconHelp,
-  IconSearch,
   IconInnerShadowTop,
 } from "@tabler/icons-react";
 
@@ -25,7 +22,6 @@ import {
 } from "@/components/ui/sidebar";
 
 import { NavUser } from "./ui/nav-user";
-import { NavSecondary } from "./ui/nav-secondary";
 import { NavMain } from "./ui/nav-main";
 
 const data = {
@@ -73,23 +69,6 @@ const data = {
       adminOnly: true,
     },
   ],
-  navSecondary: [
-    {
-      title: "Settings",
-      url: "/settings",
-      icon: IconSettings,
-    },
-    {
-      title: "Get Help",
-      url: "/help",
-      icon: IconHelp,
-    },
-    {
-      title: "Search",
-      url: "/search",
-      icon: IconSearch,
-    },
-  ],
 };
 
 export function AppSidebar({
@@ -119,7 +98,6 @@ export function AppSidebar({
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navMainFiltered} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

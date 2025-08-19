@@ -3,6 +3,8 @@ import { CreateDeliveryDto } from "./dto/create-delivery.dto";
 import { Delivery, Prisma } from "@prisma/client";
 import { PrismaService } from "src/database/prisma.service";
 import { UpdateDeliveryDto } from "./dto/update-delivery.dto";
+import { FindPagedDeliveries } from "./types/types";
+import { PagedArgs } from "src/common/dto/paged-args.dto";
 
 @Injectable()
 export class DeliveriesRepository {
@@ -29,8 +31,28 @@ export class DeliveriesRepository {
     return this.prisma.delivery.findUnique({ where: { id } });
   }
 
-  getAll(): Promise<Delivery[]> {
-    return this.prisma.delivery.findMany();
+  async getAllPaged({ skip, take, q }: PagedArgs): Promise<FindPagedDeliveries> {
+    const where: Prisma.DeliveryWhereInput | undefined = q
+      ? {
+          OR: [
+            { product: { title: { contains: q, mode: "insensitive" } } },
+            { note: { contains: q, mode: "insensitive" } },
+          ],
+        }
+      : undefined;
+
+    const [total, rows] = await this.prisma.$transaction([
+      this.prisma.delivery.count({ where }),
+      this.prisma.delivery.findMany({
+        where,
+        skip,
+        take,
+        orderBy: { deliveredAt: "desc" },
+        include: { product: { select: { title: true } } },
+      }),
+    ]);
+
+    return { rows, total };
   }
 
   update(id: number, data: UpdateDeliveryDto): Promise<Delivery> {

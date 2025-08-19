@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from "@nestjs/common";
 import { JwtAuthGuard } from "../auth/guards/jwt-guard";
@@ -16,6 +17,9 @@ import { CreateDeliveryDto } from "./dto/create-delivery.dto";
 import { Delivery } from "@prisma/client";
 import { DeliveriesService } from "./deliveries.service";
 import { UpdateDeliveryDto } from "./dto/update-delivery.dto";
+import { GetDeliveriesQueryDto } from "./dto/get-deliveries.query.dto";
+import { PagedResponse } from "src/common/dto/paged-response.dto";
+import { DeliveryRowDto } from "./dto/delivery-row.dto";
 
 @UseGuards(JwtAuthGuard)
 @Controller("deliveries")
@@ -36,8 +40,8 @@ export class DeliveriesController {
 
   @HttpCode(HttpStatus.OK)
   @Get()
-  getAllDeliveries(): Promise<Delivery[]> {
-    return this.deliveriesService.getDeliveries();
+  getAllDeliveries(@Query() query: GetDeliveriesQueryDto): Promise<PagedResponse<DeliveryRowDto>> {
+    return this.deliveriesService.getDeliveries(query);
   }
 
   @HttpCode(HttpStatus.OK)

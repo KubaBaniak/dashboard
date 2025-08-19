@@ -7,6 +7,7 @@ import { CategoriesService } from "../categories/categories.service";
 import { ListProductsQueryDto } from "./dto/list-products.dto";
 import { PagedResponse } from "src/common/dto/paged-response.dto";
 import { ProductRowDto } from "./dto/product-row.dto";
+import { ProductOptionDto } from "./dto/product-option.dto";
 
 @Injectable()
 export class ProductsService {
@@ -60,6 +61,11 @@ export class ProductsService {
     }));
 
     return { data, page, pageSize, total };
+  }
+
+  async getOptions(): Promise<ProductOptionDto[]> {
+    const rows = await this.productsRepository.findOptions();
+    return rows.map(r => ({ id: r.id, title: r.title }));
   }
 
   getProductBySku(sku: string): Promise<Product | null> {

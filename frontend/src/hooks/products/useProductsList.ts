@@ -9,7 +9,7 @@ type UseProductsArgs = {
   categoryId?: number;
 };
 
-export function useProducts({
+export function useProductsList({
   page,
   pageSize,
   q = "",

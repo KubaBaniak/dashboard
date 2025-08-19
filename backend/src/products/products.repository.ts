@@ -3,6 +3,8 @@ import { PrismaService } from "../database/prisma.service";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { Prisma, Product } from "@prisma/client";
 import { QueryProductsResult } from "./types/productsWithCategories";
+import { ProductOptionDto } from "./dto/product-option.dto";
+import { ProductRowDto } from "./dto/product-row.dto";
 
 @Injectable()
 export class ProductsRepository {
@@ -45,6 +47,13 @@ export class ProductsRepository {
       }),
     ]);
     return { total, rows };
+  }
+
+  findOptions(): Promise<ProductOptionDto[]> {
+    return this.prismaService.product.findMany({
+      select: { id: true, title: true },
+      orderBy: { title: "asc" },
+    });
   }
 
   getProductById(id: number): Promise<Product | null> {

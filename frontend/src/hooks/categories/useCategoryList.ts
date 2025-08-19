@@ -1,4 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import api from "@/lib/api";
 
 export type CategoryRow = {
@@ -48,7 +49,7 @@ export function useCategoryList({ page, pageSize, q, enabled = true }: Args) {
       const total = Number(payload?.total ?? data.length);
       return { data, page: pageOut, pageSize: pageSizeOut, total };
     },
-    placeholderData: { data: [], page, pageSize, total: 0 },
+    placeholderData: keepPreviousData,
     staleTime: 30_000,
     enabled,
   });

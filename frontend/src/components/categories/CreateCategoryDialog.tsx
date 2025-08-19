@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { useCreateCategory } from "@/hooks/useCategoryMutations";
+import { useCreateCategory } from "@/hooks/categories/useCategoryMutations";
 import {
   CreateCategoryInput,
   createCategorySchema,

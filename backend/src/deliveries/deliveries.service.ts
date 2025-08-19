@@ -5,6 +5,9 @@ import { Delivery } from "@prisma/client";
 import { UpdateDeliveryDto } from "./dto/update-delivery.dto";
 import { DeliveriesRepository } from "./deliveries.repository";
 import { PrismaService } from "src/database/prisma.service";
+import { DeliveryRowDto } from "./dto/delivery-row.dto";
+import { PagedResponse } from "src/common/dto/paged-response.dto";
+import { GetDeliveriesQueryDto } from "./dto/get-deliveries.query.dto";
 
 @Injectable()
 export class DeliveriesService {
@@ -36,8 +39,28 @@ export class DeliveriesService {
     return delivery;
   }
 
-  async getDeliveries(): Promise<Delivery[]> {
-    return this.deliveriesRepository.getAll();
+  async getDeliveries(query: GetDeliveriesQueryDto): Promise<PagedResponse<DeliveryRowDto>> {
+    const page = Math.max(1, query.page ?? 1);
+    const pageSize = Math.min(100, Math.max(1, query.pageSize ?? 10));
+    const skip = (page - 1) * pageSize;
+    const q = (query.q ?? "").trim();
+
+    const { rows, total } = await this.deliveriesRepository.getAllPaged({
+      skip,
+      take: pageSize,
+      q: q || undefined,
+    });
+
+    const data: DeliveryRowDto[] = rows.map(d => ({
+      id: d.id,
+      productId: d.productId,
+      productName: d.product.title,
+      quantity: d.quantity,
+      deliveredAt: String(d.deliveredAt),
+      note: d.note ?? null,
+    }));
+
+    return { data, page, pageSize, total };
   }
 
   async updateDelivery(id: number, data: UpdateDeliveryDto): Promise<Delivery> {

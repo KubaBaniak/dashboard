@@ -14,6 +14,7 @@ export function useCategoryOptions() {
       if (Array.isArray(payload)) return payload as CategoryOption[];
       return (payload?.data ?? []) as CategoryOption[];
     },
+    placeholderData: (prev) => prev,
     staleTime: 60_000,
   });
 }

@@ -1,12 +1,10 @@
 "use client";
 
+import { useEffect } from "react";
 import { useState } from "react";
 import Pagination from "@/components/Pagination";
 import CenteredSpinner from "@/components/utils/CenteredSpinner";
-import CategoriesToolbar from "@/components/categories/CategoriesToolbar";
 import { useUrlPagination } from "@/hooks/useUrlPagination";
-import { useCategoryList } from "@/hooks/categories/useCategoryList";
-import { useDeleteCategory } from "@/hooks/categories/useCategoryMutations";
 
 import {
   Table,
@@ -20,7 +18,6 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
-import EditCategoryDialog from "@/components/categories/EditCategoryDialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,26 +28,30 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import EditDeliveryDialog from "./EditDeliveryDialog";
+import { useDeliveryList } from "@/hooks/deliveries/useDeliveryList";
+import { useDeleteDelivery } from "@/hooks/deliveries/useDeliveryMutations";
+import DeliveriesToolbar from "./DeliveriesToolbar";
+import { formatDate } from "../utils/format-date";
 
-export default function CategoriesTable() {
+export default function DeliveriesTable() {
   const { page, pageSize, q, set } = useUrlPagination();
 
-  const { data, isLoading, isError } = useCategoryList({ page, pageSize, q });
-  const del = useDeleteCategory();
+  const { data, isLoading, isError } = useDeliveryList({ page, pageSize, q });
+  const del = useDeleteDelivery();
 
   const [toDelete, setToDelete] = useState<number | null>(null);
-
-  if (isLoading) return <CenteredSpinner />;
-  if (isError)
-    return <p className="text-red-500">Failed to load categories.</p>;
-
   const rows = data?.data ?? [];
   const total = data?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
+  if (isLoading) return <CenteredSpinner />;
+  if (isError)
+    return <p className="text-red-500">Failed to load deliveries.</p>;
+
   return (
     <div className="space-y-4 rounded-md border border-muted p-4 shadow-sm bg-gradient-to-t from-primary/5">
-      <CategoriesToolbar
+      <DeliveriesToolbar
         pageSize={pageSize}
         onPageSizeChange={(n) => {
           set({ pageSize: n, page: 1 });
@@ -63,19 +64,22 @@ export default function CategoriesTable() {
 
       <div className="overflow-auto">
         <Table>
-          <TableCaption className="text-left">All categories</TableCaption>
+          <TableCaption className="text-left">All deliveries</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead className="w-[80px]">ID</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead className="text-right">Products</TableHead>
-              <TableHead className="w-[140px]">Actions</TableHead>
+              <TableHead>Product Name</TableHead>
+              <TableHead>Note</TableHead>
+              <TableHead className="text-right">Qty</TableHead>
+              <TableHead className="text-right w-[140px]">
+                Delivered At
+              </TableHead>
+              <TableHead className="w-[140px] text-center">Actions</TableHead>
             </TableRow>
           </TableHeader>
 
           <TableBody>
-            {rows.length === 0 ? (
+            {rows.length === 0 && !isLoading ? (
               <TableRow>
                 <TableCell
                   colSpan={5}
@@ -85,21 +89,24 @@ export default function CategoriesTable() {
                 </TableCell>
               </TableRow>
             ) : (
-              rows.map((c) => (
-                <TableRow key={c.id}>
-                  <TableCell className="font-medium">{c.id}</TableCell>
-                  <TableCell>{c.name}</TableCell>
+              rows.map((d) => (
+                <TableRow key={d.id}>
+                  <TableCell className="font-medium">{d.id}</TableCell>
+                  <TableCell>{d.productName}</TableCell>
                   <TableCell
-                    className="max-w-[420px] truncate"
-                    title={c.description ?? ""}
+                    className="max-w-[420px] truncate text overflow-ellipsis"
+                    title={d.note ?? ""}
                   >
-                    {c.description}
+                    {d.note}
                   </TableCell>
-                  <TableCell className="text-right">{c.productCount}</TableCell>
+                  <TableCell className="text-right">{d.quantity}</TableCell>
+                  <TableCell className="text-right">
+                    {formatDate(d.deliveredAt)}
+                  </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <EditCategoryDialog
-                        category={c}
+                      <EditDeliveryDialog
+                        delivery={d}
                         trigger={
                           <Button size="sm" variant="secondary">
                             <Pencil className="mr-2 h-4 w-4" />
@@ -113,7 +120,7 @@ export default function CategoriesTable() {
                           <Button
                             size="sm"
                             variant="destructive"
-                            onClick={() => setToDelete(c.id)}
+                            onClick={() => setToDelete(d.id)}
                           >
                             <Trash2 className="mr-2 h-4 w-4" />
                             Delete
@@ -122,7 +129,7 @@ export default function CategoriesTable() {
                         <AlertDialogContent>
                           <AlertDialogHeader>
                             <AlertDialogTitle>
-                              Delete this category?
+                              Delete this delivery?
                             </AlertDialogTitle>
                           </AlertDialogHeader>
                           <p className="text-sm text-muted-foreground">

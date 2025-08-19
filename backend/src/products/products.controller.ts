@@ -19,6 +19,7 @@ import { UpdateProductDto } from "./dto/update-product.dto";
 import { ListProductsQueryDto } from "./dto/list-products.dto";
 import { PagedResponse } from "src/common/dto/paged-response.dto";
 import { ProductRowDto } from "./dto/product-row.dto";
+import { ProductOptionDto } from "./dto/product-option.dto";
 
 @Controller("products")
 export class ProductsController {
@@ -36,6 +37,12 @@ export class ProductsController {
   @Get()
   async getAllProducts(@Query() query: ListProductsQueryDto): Promise<PagedResponse<ProductRowDto>> {
     return this.productsService.listProducts(query);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get("options")
+  getProductOptions(): Promise<ProductOptionDto[]> {
+    return this.productsService.getOptions();
   }
 
   @HttpCode(HttpStatus.OK)

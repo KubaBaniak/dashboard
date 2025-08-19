@@ -39,7 +39,7 @@ export class CategoriesRepository {
     return { rows, total };
   }
 
-  async findOptions(): Promise<CategoryOptionRow[]> {
+  findOptions(): Promise<CategoryOptionRow[]> {
     return this.prismaService.category.findMany({
       select: { id: true, name: true },
       orderBy: { name: "asc" },

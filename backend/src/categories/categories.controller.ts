@@ -36,11 +36,13 @@ export class CategoriesController {
     return this.categoriesService.createCategory(payload);
   }
 
+  @HttpCode(HttpStatus.OK)
   @Get()
   async getCategories(@Query() query: GetCategoriesQueryDto): Promise<PagedResponse<CategoryRowDto>> {
     return this.categoriesService.getList(query);
   }
 
+  @HttpCode(HttpStatus.OK)
   @Get("options")
   async getCategoryOptions(): Promise<CategoryOptionDto[]> {
     return this.categoriesService.getOptions();

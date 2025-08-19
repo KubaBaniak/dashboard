@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Pagination from "../Pagination";
-import { useProducts } from "@/hooks/useProducts";
 import CenteredSpinner from "../utils/CenteredSpinner";
 import ProductsToolbar from "./ProductsToolbar";
 import {
@@ -16,13 +15,14 @@ import {
   TableRow,
 } from "../ui/table";
 import { Badge } from "../ui/badge";
+import { useProductsList } from "@/hooks/products/useProductsList";
 
 export default function ProductsTable() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [q, setQ] = useState("");
 
-  const { data, isLoading, isError } = useProducts({ page, pageSize, q });
+  const { data, isLoading, isError } = useProductsList({ page, pageSize, q });
 
   if (isLoading) return <CenteredSpinner />;
   if (isError) return <p className="text-red-500">Failed to load products.</p>;

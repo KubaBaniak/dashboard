@@ -23,7 +23,7 @@ async function fetchUser(): Promise<PlainUser | null> {
       role: data.role,
       name: data.name,
     };
-  } catch (err) {
+  } catch {
     return null;
   }
 }
