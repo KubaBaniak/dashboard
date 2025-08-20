@@ -25,3 +25,16 @@ export function useUpdateClient() {
     },
   });
 }
+
+export function useDeleteClient() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: number) => {
+      await api.delete(`/clients/${id}`, { withCredentials: true });
+      return true;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["clientsBase"] });
+    },
+  });
+}

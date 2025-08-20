@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Pagination from "@/components/Pagination";
 import CenteredSpinner from "@/components/utils/CenteredSpinner";
 import { useUrlPagination } from "@/hooks/useUrlPagination";
@@ -19,21 +18,20 @@ import { formatDate } from "../utils/format-date";
 import { useClientsBase } from "@/hooks/clients/useClientsBase";
 import EditClientDialog from "./EditClientsDialog";
 import { Button } from "../ui/button";
-import { Pencil } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
+import DeleteClientDialog from "./DeleteClientDialog";
 
 export default function ClientsTable() {
   const { page, pageSize, q, set } = useUrlPagination();
 
   const { data, isLoading, isError } = useClientsBase({ page, pageSize, q });
 
-  const [toDelete, setToDelete] = useState<number | null>(null);
   const rows = data?.data ?? [];
   const total = data?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   if (isLoading) return <CenteredSpinner />;
-  if (isError)
-    return <p className="text-red-500">Failed to load deliveries.</p>;
+  if (isError) return <p className="text-red-500">Failed to load Clients.</p>;
 
   return (
     <div className="space-y-4 rounded-md border border-muted p-4 shadow-sm bg-gradient-to-t from-primary/5">
@@ -93,9 +91,15 @@ export default function ClientsTable() {
                         }
                       />
 
-                      {
-                        //delete dialog here
-                      }
+                      <DeleteClientDialog
+                        clientId={client.id}
+                        trigger={
+                          <Button size="sm" variant="destructive">
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Delete
+                          </Button>
+                        }
+                      />
                     </div>
                   </TableCell>
                 </TableRow>
