@@ -30,13 +30,13 @@ type Props = {
     company?: string;
   };
   trigger: React.ReactNode;
-  onUpdated?: () => void;
+  onUpdatedAction?: () => void;
 };
 
 export default function EditClientDialog({
   client,
   trigger,
-  onUpdated,
+  onUpdatedAction,
 }: Props) {
   const [open, setOpen] = useState(false);
 
@@ -64,7 +64,7 @@ export default function EditClientDialog({
     await update.mutateAsync(values);
     reset(values);
     setOpen(false);
-    onUpdated?.();
+    onUpdatedAction?.();
   }
 
   return (
