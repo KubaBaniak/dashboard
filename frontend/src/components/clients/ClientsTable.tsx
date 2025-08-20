@@ -20,6 +20,7 @@ import EditClientDialog from "./EditClientsDialog";
 import { Button } from "../ui/button";
 import { Pencil, Trash2 } from "lucide-react";
 import DeleteClientDialog from "./DeleteClientDialog";
+import ClientsToolbar from "./ClientsToolbar";
 
 export default function ClientsTable() {
   const { page, pageSize, q, set } = useUrlPagination();
@@ -35,9 +36,16 @@ export default function ClientsTable() {
 
   return (
     <div className="space-y-4 rounded-md border border-muted p-4 shadow-sm bg-gradient-to-t from-primary/5">
-      {
-        //toolbar here
-      }
+      <ClientsToolbar
+        pageSize={pageSize}
+        onPageSizeChange={(n) => {
+          set({ pageSize: n, page: 1 });
+        }}
+        query={q}
+        onQueryChange={(s) => {
+          set({ q: s, page: 1 });
+        }}
+      />
 
       <div className="overflow-auto">
         <Table>
