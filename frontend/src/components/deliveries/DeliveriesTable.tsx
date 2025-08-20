@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { useState } from "react";
 import Pagination from "@/components/Pagination";
 import CenteredSpinner from "@/components/utils/CenteredSpinner";

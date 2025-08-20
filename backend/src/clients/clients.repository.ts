@@ -45,7 +45,7 @@ export class ClientsRepository {
         where,
         skip,
         take,
-        orderBy: { id: "desc" },
+        orderBy: { id: "asc" },
       }),
     ]);
 
