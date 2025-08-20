@@ -2,6 +2,8 @@ import { Injectable } from "@nestjs/common";
 import { Client, Prisma } from "@prisma/client";
 import { PrismaService } from "../database/prisma.service";
 import { CreateClientDto } from "./dto/create-client.dto";
+import { FindPagedBaseClients } from "./types/types";
+import { PagedArgs } from "src/common/dto/paged-args.dto";
 
 @Injectable()
 export class ClientsRepository {
@@ -25,8 +27,29 @@ export class ClientsRepository {
     return this.prismaService.client.findUnique({ where: { email } });
   }
 
-  getAllClients(): Promise<Client[] | null> {
-    return this.prismaService.client.findMany();
+  async findBaseClientsPaged({ skip, take, q }: PagedArgs): Promise<FindPagedBaseClients> {
+    const where: Prisma.ClientWhereInput | undefined = q
+      ? {
+          OR: [
+            { email: { contains: q, mode: "insensitive" } },
+            { name: { contains: q, mode: "insensitive" } },
+            { phone: { contains: q, mode: "insensitive" } },
+            { address: { contains: q, mode: "insensitive" } },
+            { company: { contains: q, mode: "insensitive" } },
+          ],
+        }
+      : undefined;
+    const [total, rows] = await this.prismaService.$transaction([
+      this.prismaService.client.count({ where }),
+      this.prismaService.client.findMany({
+        where,
+        skip,
+        take,
+        orderBy: { id: "desc" },
+      }),
+    ]);
+
+    return { rows, total };
   }
 
   getClientById(id: number): Promise<Client | null> {

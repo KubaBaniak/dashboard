@@ -1,9 +1,24 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, UseGuards } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from "@nestjs/common";
 import { JwtAuthGuard } from "../auth/guards/jwt-guard";
 import { CreateClientDto } from "./dto/create-client.dto";
 import { ClientsService } from "./clients.service";
 import { Client } from "@prisma/client";
 import { UpdateClientDto } from "./dto/update-client.dto";
+import { GetClientsQueryDto } from "./dto/get-clients.query.dto";
+import { PagedResponse } from "src/common/dto/paged-response.dto";
+import { ClientRowDto } from "./dto/client-row.dto";
 
 @Controller("clients")
 export class ClientsController {
@@ -19,8 +34,8 @@ export class ClientsController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   @Get()
-  getAllClients(): Promise<Client[] | null> {
-    return this.clientsService.getAllClients();
+  getAllClients(@Query() query: GetClientsQueryDto): Promise<PagedResponse<ClientRowDto>> {
+    return this.clientsService.getBaseClientsDetails(query);
   }
 
   @HttpCode(HttpStatus.OK)

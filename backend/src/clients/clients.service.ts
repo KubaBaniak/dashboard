@@ -3,6 +3,9 @@ import { ClientsRepository } from "./clients.repository";
 import { CreateClientDto } from "./dto/create-client.dto";
 import { Client } from "@prisma/client";
 import { UpdateClientDto } from "./dto/update-client.dto";
+import { ClientRowDto } from "./dto/client-row.dto";
+import { PagedResponse } from "src/common/dto/paged-response.dto";
+import { GetClientsQueryDto } from "./dto/get-clients.query.dto";
 
 @Injectable()
 export class ClientsService {
@@ -18,8 +21,29 @@ export class ClientsService {
     return this.clientsRepository.createClient(data);
   }
 
-  getAllClients(): Promise<Client[] | null> {
-    return this.clientsRepository.getAllClients();
+  async getBaseClientsDetails(query: GetClientsQueryDto): Promise<PagedResponse<ClientRowDto>> {
+    const page = Math.max(1, query.page ?? 1);
+    const pageSize = Math.min(100, Math.max(1, query.pageSize ?? 10));
+    const skip = (page - 1) * pageSize;
+    const q = (query.q ?? "").trim();
+
+    const { rows, total } = await this.clientsRepository.findBaseClientsPaged({
+      skip,
+      take: pageSize,
+      q: q || undefined,
+    });
+
+    const data: ClientRowDto[] = rows.map(r => ({
+      id: r.id,
+      email: r.email,
+      name: r.email,
+      phone: r.phone,
+      address: r.address,
+      company: r.company,
+      createdAt: String(r.createdAt),
+    }));
+
+    return { data, page, pageSize, total };
   }
 
   getClientById(id: number): Promise<Client | null> {

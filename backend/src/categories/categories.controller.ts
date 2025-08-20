@@ -37,12 +37,14 @@ export class CategoriesController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
   @Get()
   async getCategories(@Query() query: GetCategoriesQueryDto): Promise<PagedResponse<CategoryRowDto>> {
     return this.categoriesService.getList(query);
   }
 
   @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
   @Get("options")
   async getCategoryOptions(): Promise<CategoryOptionDto[]> {
     return this.categoriesService.getOptions();
