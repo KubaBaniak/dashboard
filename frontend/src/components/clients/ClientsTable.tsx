@@ -17,6 +17,9 @@ import {
 } from "@/components/ui/table";
 import { formatDate } from "../utils/format-date";
 import { useClientsBase } from "@/hooks/clients/useClientsBase";
+import EditClientDialog from "./EditClientsDialog";
+import { Button } from "../ui/button";
+import { Pencil } from "lucide-react";
 
 export default function ClientsTable() {
   const { page, pageSize, q, set } = useUrlPagination();
@@ -43,7 +46,7 @@ export default function ClientsTable() {
           <TableCaption className="text-left">All deliveries</TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[80px]">ID</TableHead>
+              <TableHead className="w-[40px]">ID</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Phone</TableHead>
@@ -80,9 +83,15 @@ export default function ClientsTable() {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      {
-                        //edit dialog here
-                      }
+                      <EditClientDialog
+                        client={client}
+                        trigger={
+                          <Button size="sm" variant="secondary">
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Edit
+                          </Button>
+                        }
+                      />
 
                       {
                         //delete dialog here
