@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import CreateClientDialog from "./CreateClientDialog";
 
 interface ToolbarProps {
   pageSize: number;
@@ -59,9 +60,7 @@ export default function ClientsToolbar({
           className="w-full sm:w-[280px]"
         />
 
-        {
-          //create dialog
-        }
+        <CreateClientDialog />
       </div>
     </div>
   );

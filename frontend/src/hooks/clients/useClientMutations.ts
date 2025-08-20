@@ -1,6 +1,27 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/lib/api";
 
+export function useCreateClient() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: {
+      email: string;
+      name?: string;
+      phone?: string;
+      address?: string;
+      company?: string;
+    }) => {
+      const res = await api.post("/clients", input, {
+        withCredentials: true,
+      });
+      return res.data;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["clientsBase"] });
+    },
+  });
+}
+
 export function useUpdateClient() {
   const qc = useQueryClient();
   return useMutation({

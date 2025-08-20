@@ -92,7 +92,6 @@ export default function CreateDeliveryDialog({ trigger, onCreated }: Props) {
         </DialogHeader>
 
         <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-          {/* Product */}
           <div className="space-y-2">
             <label className="text-sm font-medium">Product</label>
 
