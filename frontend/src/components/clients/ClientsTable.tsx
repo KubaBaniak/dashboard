@@ -16,11 +16,8 @@ import {
 } from "@/components/ui/table";
 import { formatDate } from "../utils/format-date";
 import { useClientsBase } from "@/hooks/clients/useClientsBase";
-import EditClientDialog from "./EditClientsDialog";
-import { Button } from "../ui/button";
-import { Pencil, Trash2 } from "lucide-react";
-import DeleteClientDialog from "./DeleteClientDialog";
 import ClientsToolbar from "./ClientsToolbar";
+import ClientActionsMenu from "./ClientActionsMenu";
 
 export default function ClientsTable() {
   const { page, pageSize, q, set } = useUrlPagination();
@@ -59,7 +56,7 @@ export default function ClientsTable() {
               <TableHead>Address</TableHead>
               <TableHead>Company</TableHead>
               <TableHead className="text-right">CreatedAt</TableHead>
-              <TableHead className="w-[140px] text-center">Actions</TableHead>
+              <TableHead className="w-[56px] text-center">Actions</TableHead>
             </TableRow>
           </TableHeader>
 
@@ -87,28 +84,8 @@ export default function ClientsTable() {
                       dateStyle: "short",
                     })}
                   </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <EditClientDialog
-                        client={client}
-                        trigger={
-                          <Button size="sm" variant="secondary">
-                            <Pencil className="mr-2 h-4 w-4" />
-                            Edit
-                          </Button>
-                        }
-                      />
-
-                      <DeleteClientDialog
-                        clientId={client.id}
-                        trigger={
-                          <Button size="sm" variant="destructive">
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Delete
-                          </Button>
-                        }
-                      />
-                    </div>
+                  <TableCell className="text-center">
+                    <ClientActionsMenu client={client} />
                   </TableCell>
                 </TableRow>
               ))

@@ -16,17 +16,23 @@ import { useDeleteClient } from "@/hooks/clients/useClientMutations";
 
 type Props = {
   clientId: number;
-  trigger: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (o: boolean) => void;
 };
 
-export default function DeleteClientDialog({ clientId, trigger }: Props) {
-  const [open, setOpen] = useState(false);
+export default function DeleteClientDialog({
+  clientId,
+  open: controlledOpen,
+  onOpenChange,
+}: Props) {
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+  const open = controlledOpen ?? uncontrolledOpen;
+  const setOpen = onOpenChange ?? setUncontrolledOpen;
 
   const del = useDeleteClient();
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Delete this Client?</AlertDialogTitle>

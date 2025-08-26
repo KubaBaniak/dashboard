@@ -8,6 +8,7 @@ import { ListProductsQueryDto } from "./dto/list-products.dto";
 import { PagedResponse } from "src/common/dto/paged-response.dto";
 import { ProductRowDto } from "./dto/product-row.dto";
 import { ProductOptionDto } from "./dto/product-option.dto";
+import { DbClient } from "src/common/types/db";
 
 @Injectable()
 export class ProductsService {
@@ -76,6 +77,10 @@ export class ProductsService {
     return this.productsRepository.getProductById(id);
   }
 
+  getProductsByIdList(ids: number[], db?: DbClient): Promise<Product[]> | [] {
+    return this.productsRepository.findManyByIds(ids, db);
+  }
+
   async updateProduct(productId: number, data: UpdateProductDto): Promise<Product> {
     const product = await this.getProductById(productId);
     if (!product) {
@@ -118,5 +123,10 @@ export class ProductsService {
     }
 
     return this.productsRepository.updateProductInTx(tx, productId, { stockQuantity: updatedQty });
+  }
+
+  async decrementStockConditional(productId: number, qty: number, db?: DbClient): Promise<boolean> {
+    const res = await this.productsRepository.decrementStock(productId, qty, db);
+    return res.count === 1;
   }
 }

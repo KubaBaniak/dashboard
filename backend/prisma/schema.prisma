@@ -47,6 +47,8 @@ model OrderItem {
   productId Int
   quantity  Int
   price     Decimal @db.Decimal(10, 2)
+
+  @@unique([orderId, productId])
 }
 
 model Product {

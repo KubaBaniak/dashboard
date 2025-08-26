@@ -19,6 +19,7 @@ import { UpdateClientDto } from "./dto/update-client.dto";
 import { GetClientsQueryDto } from "./dto/get-clients.query.dto";
 import { PagedResponse } from "src/common/dto/paged-response.dto";
 import { ClientRowDto } from "./dto/client-row.dto";
+import { ClientOverviewDto } from "./dto/client-overview.dto";
 
 @Controller("clients")
 export class ClientsController {
@@ -47,6 +48,13 @@ export class ClientsController {
 
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
+  @Get("/:id/overview")
+  getClientOverview(@Param("id") clientId: string): Promise<ClientOverviewDto> {
+    return this.clientsService.getClientOverview(+clientId);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
   @Patch("/:id")
   updateClient(@Param("id") clientId: string, @Body() clientData: UpdateClientDto): Promise<Client | null> {
     return this.clientsService.updateClient(+clientId, clientData);
@@ -55,7 +63,7 @@ export class ClientsController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   @Delete("/:id")
-  deleteClient(@Param("id") clientId): Promise<Client> {
+  deleteClient(@Param("id") clientId: string): Promise<Client> {
     return this.clientsService.deleteClient(+clientId);
   }
 }

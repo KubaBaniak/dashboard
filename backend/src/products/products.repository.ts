@@ -4,7 +4,7 @@ import { CreateProductDto } from "./dto/create-product.dto";
 import { Prisma, Product } from "@prisma/client";
 import { QueryProductsResult } from "./types/productsWithCategories";
 import { ProductOptionDto } from "./dto/product-option.dto";
-import { ProductRowDto } from "./dto/product-row.dto";
+import { DbClient } from "src/common/types/db";
 
 @Injectable()
 export class ProductsRepository {
@@ -47,6 +47,12 @@ export class ProductsRepository {
       }),
     ]);
     return { total, rows };
+  }
+
+  async findManyByIds(ids: number[], db: DbClient = this.prismaService): Promise<Product[]> {
+    return db.product.findMany({
+      where: { id: { in: ids } },
+    });
   }
 
   findOptions(): Promise<ProductOptionDto[]> {
@@ -92,6 +98,13 @@ export class ProductsRepository {
           },
         },
       },
+    });
+  }
+
+  decrementStock(productId: number, qty: number, db: DbClient = this.prismaService): Promise<Prisma.BatchPayload> {
+    return db.product.updateMany({
+      where: { id: productId, stockQuantity: { gte: qty } },
+      data: { stockQuantity: { decrement: qty } },
     });
   }
 }

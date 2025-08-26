@@ -1,17 +1,19 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { forwardRef, Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { OrderItemsRepository } from "./order-items.repository";
 import { CreateOrderItemDto } from "./dto/create-order-item.dto";
 import { UpdateOrderItemDto } from "./dto/update-order-item.dto";
 import { OrderItem } from "@prisma/client";
 import { ProductsService } from "../products/products.service";
 import { OrdersService } from "../orders/orders.service";
+import { DbClient } from "src/common/types/db";
+import { Decimal } from "@prisma/client/runtime/library";
 
 @Injectable()
 export class OrderItemsService {
   constructor(
     private readonly orderItemsRepository: OrderItemsRepository,
     private readonly productsService: ProductsService,
-    private readonly ordersService: OrdersService,
+    @Inject(forwardRef(() => OrdersService)) private readonly ordersService: OrdersService,
   ) {}
 
   async create(dto: CreateOrderItemDto): Promise<OrderItem> {
@@ -28,7 +30,15 @@ export class OrderItemsService {
       throw new NotFoundException("ORDER NOT FOUND");
     }
 
-    return this.orderItemsRepository.create(dto);
+    return this.orderItemsRepository.create(dto, product.price);
+  }
+
+  createOnOrderCreation(
+    orderId: number,
+    line: { productId: number; quantity: number; unitPrice: Decimal },
+    db?: DbClient,
+  ): Promise<OrderItem> {
+    return this.orderItemsRepository.createOrderItem(orderId, line, db);
   }
 
   getAll(): Promise<OrderItem[]> {

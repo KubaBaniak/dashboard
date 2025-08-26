@@ -20,6 +20,7 @@ import { UpdateOrderDto } from "./dto/update-order.dto";
 import { ListOrdersQueryDto } from "./dto/list-orders.dto";
 import { PagedResponse } from "src/common/dto/paged-response.dto";
 import { OrderRowDto } from "./dto/order-row.dto";
+import { CreatedOrderWithItems } from "./types/types";
 
 @Controller("orders")
 @UseGuards(JwtAuthGuard)
@@ -28,7 +29,7 @@ export class OrdersController {
 
   @HttpCode(HttpStatus.CREATED)
   @Post()
-  createOrder(@Body() dto: CreateOrderDto): Promise<Order> {
+  createOrder(@Body() dto: CreateOrderDto): Promise<CreatedOrderWithItems> {
     return this.ordersService.createOrder(dto);
   }
 

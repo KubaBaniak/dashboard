@@ -19,6 +19,7 @@ import {
   UpdateClientInput,
   updateClientSchema,
 } from "@/lib/validation-schemas/clientSchemas";
+import { Pencil } from "lucide-react";
 
 type Props = {
   client: {
@@ -29,16 +30,18 @@ type Props = {
     address?: string;
     company?: string;
   };
-  trigger: React.ReactNode;
-  onUpdatedAction?: () => void;
+  open?: boolean;
+  onOpenChange?: (o: boolean) => void;
 };
 
 export default function EditClientDialog({
   client,
-  trigger,
-  onUpdatedAction,
+  open: controlledOpen,
+  onOpenChange,
 }: Props) {
-  const [open, setOpen] = useState(false);
+  const [innerOpen, setInnerOpen] = useState(false);
+  const open = controlledOpen ?? innerOpen;
+  const setOpen = onOpenChange ?? setInnerOpen;
 
   const update = useUpdateClient();
 
@@ -64,13 +67,10 @@ export default function EditClientDialog({
     await update.mutateAsync(values);
     reset(values);
     setOpen(false);
-    onUpdatedAction?.();
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
-
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Edit Client</DialogTitle>
