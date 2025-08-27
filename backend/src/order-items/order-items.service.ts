@@ -69,7 +69,7 @@ export class OrderItemsService {
     if (!item) {
       throw new NotFoundException("CANNOT DELETE ORDER ITEM - ORDER ITEM NOT FOUND");
     }
-    return this.orderItemsRepository.delete(id);
+    return this.orderItemsRepository.delete(id, item.productId, item.quantity);
   }
 
   async findItemsByOrderId(orderId: number): Promise<OrderItemRowDto[]> {

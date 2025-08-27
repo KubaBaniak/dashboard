@@ -81,7 +81,7 @@ export default function ManageOrderItemsDialog({
   const total = items.reduce((s, i) => s + Number(i.lineTotal), 0);
 
   async function onAdd(values: AddForm) {
-    if (!values.productId || values.quantity < 1) return; // simple guard
+    if (!values.productId || values.quantity < 1) return;
     setSaving(true);
     try {
       await addItem.mutateAsync({

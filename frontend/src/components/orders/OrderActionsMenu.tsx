@@ -11,9 +11,9 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { MoreVertical, Pencil, ListPlus, Trash2 } from "lucide-react";
-import ManageOrderItemsDialog from "./ManageOrderItemsDialog";
-import DeleteOrderDialog from "./DeleteOrderDialog";
 import EditOrderDialog from "./EditOrderDialog";
+import DeleteOrderDialog from "./DeleteOrderDialog";
+import ManageOrderItemsDialog from "./ManageOrderItemsDialog";
 
 export type OrderActionsMenuProps = {
   order: {

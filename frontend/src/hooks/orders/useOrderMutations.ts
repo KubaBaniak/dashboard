@@ -87,6 +87,7 @@ export function useRemoveOrderItem() {
     onSuccess: (_data, vars) => {
       qc.invalidateQueries({ queryKey: ["orderItems", vars.orderId] });
       qc.invalidateQueries({ queryKey: ["orders"] });
+      qc.invalidateQueries({ queryKey: ["products"] });
       qc.invalidateQueries({ queryKey: ["order", vars.orderId] });
     },
   });

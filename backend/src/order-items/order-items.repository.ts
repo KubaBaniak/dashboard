@@ -53,9 +53,20 @@ export class OrderItemsRepository {
     });
   }
 
-  delete(id: number): Promise<OrderItem> {
-    return this.prisma.orderItem.delete({
-      where: { id },
+  delete(id: number, productId: number, qty: number): Promise<OrderItem> {
+    return this.prisma.$transaction(async tx => {
+      const deleted = await tx.orderItem.delete({
+        where: { id },
+      });
+
+      await tx.product.update({
+        where: { id: productId },
+        data: {
+          stockQuantity: { increment: qty },
+        },
+      });
+
+      return deleted;
     });
   }
 
