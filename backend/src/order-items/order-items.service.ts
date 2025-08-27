@@ -7,6 +7,7 @@ import { ProductsService } from "../products/products.service";
 import { OrdersService } from "../orders/orders.service";
 import { DbClient } from "src/common/types/db";
 import { Decimal } from "@prisma/client/runtime/library";
+import { OrderItemRowDto } from "./dto/order-item-row.dto";
 
 @Injectable()
 export class OrderItemsService {
@@ -69,5 +70,21 @@ export class OrderItemsService {
       throw new NotFoundException("CANNOT DELETE ORDER ITEM - ORDER ITEM NOT FOUND");
     }
     return this.orderItemsRepository.delete(id);
+  }
+
+  async findItemsByOrderId(orderId: number): Promise<OrderItemRowDto[]> {
+    const rows = await this.orderItemsRepository.findItemsByOrderId(orderId);
+
+    return rows.map(r => ({
+      id: r.id,
+      productId: r.productId,
+      quantity: r.quantity,
+      price: r.price.toString(),
+      product: {
+        id: r.product.id,
+        title: r.product.title ?? null,
+        sku: r.product.sku ?? null,
+      },
+    }));
   }
 }

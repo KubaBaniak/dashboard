@@ -19,6 +19,7 @@ import {
 import { ProductsService } from "src/products/products.service";
 import { PrismaService } from "src/database/prisma.service";
 import { OrderItemsService } from "src/order-items/order-items.service";
+import { OrderItemRowDto } from "src/order-items/dto/order-item-row.dto";
 
 @Injectable()
 export class OrdersService {
@@ -188,5 +189,12 @@ export class OrdersService {
       this.getBuyerRecentOrders(buyerId, 10),
     ]);
     return { stats, topProducts, orders };
+  }
+
+  async getOrderItems(orderId: number): Promise<OrderItemRowDto[]> {
+    const order = await this.ordersRepository.getOrderById(orderId);
+    if (!order) throw new NotFoundException("No order with such ID");
+
+    return this.orderItemsService.findItemsByOrderId(order.id);
   }
 }

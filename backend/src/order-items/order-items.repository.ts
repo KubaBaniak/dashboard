@@ -5,6 +5,7 @@ import { OrderItem, Prisma } from "@prisma/client";
 import { DbClient } from "src/common/types/db";
 import { CreateOrderItemDto } from "./dto/create-order-item.dto";
 import { Decimal } from "@prisma/client/runtime/library";
+import { OrderItemWithProduct } from "./types/types";
 
 @Injectable()
 export class OrderItemsRepository {
@@ -55,6 +56,16 @@ export class OrderItemsRepository {
   delete(id: number): Promise<OrderItem> {
     return this.prisma.orderItem.delete({
       where: { id },
+    });
+  }
+
+  findItemsByOrderId(orderId: number): Promise<OrderItemWithProduct[]> {
+    return this.prisma.orderItem.findMany({
+      where: { orderId },
+      include: {
+        product: { select: { id: true, title: true, sku: true } },
+      },
+      orderBy: { id: "asc" },
     });
   }
 }

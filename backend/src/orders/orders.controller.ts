@@ -10,6 +10,7 @@ import {
   HttpStatus,
   UseGuards,
   Query,
+  ParseIntPipe,
 } from "@nestjs/common";
 import { OrdersService } from "./orders.service";
 import { CreateOrderDto } from "./dto/create-order.dto";
@@ -21,6 +22,7 @@ import { ListOrdersQueryDto } from "./dto/list-orders.dto";
 import { PagedResponse } from "src/common/dto/paged-response.dto";
 import { OrderRowDto } from "./dto/order-row.dto";
 import { CreatedOrderWithItems } from "./types/types";
+import { OrderItemRowDto } from "src/order-items/dto/order-item-row.dto";
 
 @Controller("orders")
 @UseGuards(JwtAuthGuard)
@@ -37,6 +39,12 @@ export class OrdersController {
   @Get()
   getAllOrders(@Query() query: ListOrdersQueryDto): Promise<PagedResponse<OrderRowDto>> {
     return this.ordersService.getAllOrders(query);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get(":id/items")
+  getOrderItems(@Param("id", ParseIntPipe) orderId: number): Promise<OrderItemRowDto[]> {
+    return this.ordersService.getOrderItems(orderId);
   }
 
   @HttpCode(HttpStatus.OK)

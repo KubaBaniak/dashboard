@@ -10,18 +10,19 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import StatusBadge from "../utils/StatusBadge";
 import { formatCurrency } from "../utils/format-currency";
 import { Button } from "../ui/button";
 import Pagination from "../Pagination";
 import { useOrders } from "@/hooks/orders/useOrders";
 import UpdateStatusDropdown from "./UpdateStatusDropdown";
+import OrderItemsDialog from "./OrderItemsDialog";
 
 export default function OrdersTable() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [q, setQ] = useState("");
   const [status, setStatus] = useState("ALL");
+  const [itemsOpenFor, setItemsOpenFor] = useState<number | null>(null);
 
   const { data, isLoading, isError, refetch } = useOrders({
     page,
@@ -62,8 +63,9 @@ export default function OrdersTable() {
               <TableHead>Date</TableHead>
               <TableHead>Buyer</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead className="text-right">Items</TableHead>
+              <TableHead>Items</TableHead>
               <TableHead className="text-right">Total</TableHead>
+              <TableHead className="w-[56px] text-center">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -111,10 +113,18 @@ export default function OrdersTable() {
                     <TableCell>
                       <UpdateStatusDropdown status={o.status} orderId={o.id} />
                     </TableCell>
-                    <TableCell className="text-right">{o.itemCount}</TableCell>
+                    <TableCell className="font-medium">
+                      <button
+                        className="underline underline-offset-4 hover:text-primary"
+                        onClick={() => setItemsOpenFor(o.id)}
+                      >
+                        #{o.id}
+                      </button>
+                    </TableCell>
                     <TableCell className="text-right">
                       {formatCurrency(totalNumber, "pl-PL", "PLN")}
                     </TableCell>
+                    <TableCell className="text-center">ACTIONS</TableCell>
                   </TableRow>
                 );
               })
@@ -153,6 +163,14 @@ export default function OrdersTable() {
           onPageChange={setPage}
         />
       </div>
+
+      {itemsOpenFor != null && (
+        <OrderItemsDialog
+          orderId={itemsOpenFor}
+          open={itemsOpenFor != null}
+          onOpenChange={(v) => !v && setItemsOpenFor(null)}
+        />
+      )}
     </div>
   );
 }
