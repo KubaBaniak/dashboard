@@ -15,6 +15,7 @@ import { formatCurrency } from "../utils/format-currency";
 import { Button } from "../ui/button";
 import Pagination from "../Pagination";
 import { useOrders } from "@/hooks/orders/useOrders";
+import UpdateStatusDropdown from "./UpdateStatusDropdown";
 
 export default function OrdersTable() {
   const [page, setPage] = useState(1);
@@ -108,7 +109,7 @@ export default function OrdersTable() {
                     <TableCell>{date}</TableCell>
                     <TableCell>{o.buyerName ?? o.buyerEmail}</TableCell>
                     <TableCell>
-                      <StatusBadge status={o.status} />
+                      <UpdateStatusDropdown status={o.status} orderId={o.id} />
                     </TableCell>
                     <TableCell className="text-right">{o.itemCount}</TableCell>
                     <TableCell className="text-right">

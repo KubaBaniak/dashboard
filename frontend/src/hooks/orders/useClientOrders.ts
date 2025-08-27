@@ -46,7 +46,6 @@ export function useClientOrders({
         },
         withCredentials: true,
       });
-      console.log(data);
       return data;
     },
     staleTime: 30_000,
