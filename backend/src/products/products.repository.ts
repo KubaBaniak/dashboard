@@ -86,7 +86,17 @@ export class ProductsRepository {
   }
 
   deleteProduct(productId: number): Promise<Product> {
-    return this.prismaService.product.delete({ where: { id: productId } });
+    return this.prismaService.$transaction(async tx => {
+      await tx.orderItem.deleteMany({
+        where: { productId },
+      });
+
+      await tx.order.deleteMany({
+        where: { items: { none: {} } },
+      });
+
+      return tx.product.delete({ where: { id: productId } });
+    });
   }
 
   getProductsByCategoryId(categoryId: number): Promise<Product[]> {

@@ -16,6 +16,7 @@ import {
 } from "../ui/table";
 import { Badge } from "../ui/badge";
 import { useProductsList } from "@/hooks/products/useProductsList";
+import DeleteProductDialog from "./DeleteProductDialog";
 
 export default function ProductsTable() {
   const [page, setPage] = useState(1);
@@ -58,6 +59,7 @@ export default function ProductsTable() {
               <TableHead>SKU</TableHead>
               <TableHead className="text-right">Stock</TableHead>
               <TableHead className="text-right">Price</TableHead>
+              <TableHead className="text-center">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -87,6 +89,9 @@ export default function ProductsTable() {
                     {p.stockQuantity}
                   </TableCell>
                   <TableCell className="text-right">{p.price}</TableCell>
+                  <TableCell>
+                    <DeleteProductDialog productId={p.id} />
+                  </TableCell>
                 </TableRow>
               ))
             )}
