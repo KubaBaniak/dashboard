@@ -107,7 +107,7 @@ export class OrdersRepository {
         skip: (page - 1) * pageSize,
         take: pageSize,
         include: {
-          buyer: { select: { name: true, email: true } },
+          buyer: { select: { id: true, name: true, email: true } },
           items: { select: { quantity: true, price: true } },
         },
       }),
@@ -120,9 +120,12 @@ export class OrdersRepository {
       return {
         id: o.id,
         createdAt: o.createdAt.toISOString(),
+        buyerId: o.buyer.id,
         buyerName: o.buyer?.name ?? null,
         buyerEmail: o.buyer?.email ?? "",
         status: o.status,
+        shippingAddress: o.shippingAddress,
+        billingAddress: o.billingAddress,
         itemCount,
         totalAmount: totalAmount.toFixed(2),
       };

@@ -16,6 +16,7 @@ import Pagination from "../Pagination";
 import { useOrders } from "@/hooks/orders/useOrders";
 import UpdateStatusDropdown from "./UpdateStatusDropdown";
 import OrderItemsDialog from "./OrderItemsDialog";
+import OrderActionsMenu from "./OrderActionsMenu";
 
 export default function OrdersTable() {
   const [page, setPage] = useState(1);
@@ -124,7 +125,9 @@ export default function OrdersTable() {
                     <TableCell className="text-right">
                       {formatCurrency(totalNumber, "pl-PL", "PLN")}
                     </TableCell>
-                    <TableCell className="text-center">ACTIONS</TableCell>
+                    <TableCell className="text-center">
+                      <OrderActionsMenu order={o} />
+                    </TableCell>
                   </TableRow>
                 );
               })
