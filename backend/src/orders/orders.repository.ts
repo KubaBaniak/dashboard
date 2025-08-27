@@ -8,6 +8,7 @@ import { PagedResponse } from "src/common/dto/paged-response.dto";
 import {
   CreatedOrderWithItems,
   OrderItemRow,
+  OrderWithItems,
   OrderWithItemsRow,
   ProductTitleRow,
   TopProductAggRow,
@@ -33,7 +34,7 @@ export class OrdersRepository {
     });
   }
 
-  async getOrderById(id: number): Promise<Order | null> {
+  async getOrderById(id: number): Promise<OrderWithItems | null> {
     return this.prisma.order.findUnique({
       where: { id },
       include: {
@@ -75,9 +76,26 @@ export class OrdersRepository {
     });
   }
 
-  async deleteOrder(id: number): Promise<Order> {
-    return this.prisma.order.delete({
-      where: { id },
+  async deleteOrder(
+    id: number,
+    itemOrderIds: number[],
+    productIdsWithQty: { productId: number; qty: number }[],
+  ): Promise<Order> {
+    return this.prisma.$transaction(async tx => {
+      for (const { productId, qty } of productIdsWithQty) {
+        await tx.product.update({
+          where: { id: productId },
+          data: { stockQuantity: { increment: qty } },
+        });
+      }
+
+      await tx.orderItem.deleteMany({
+        where: { id: { in: itemOrderIds } },
+      });
+
+      return tx.order.delete({
+        where: { id },
+      });
     });
   }
 

@@ -46,6 +46,7 @@ export function useUpdateStatus() {
     },
 
     onSuccess: () => {
+      toast.success("Order deleted successfully");
       qc.invalidateQueries({ queryKey: ["orders"] });
       qc.invalidateQueries({ queryKey: ["clientOrders"] });
     },

@@ -9,6 +9,8 @@ export type CreateOrderWithLines = {
   items: { productId: number; quantity: number }[];
 };
 
+export type OrderWithItems = Prisma.OrderGetPayload<{ include: { items: true } }>;
+
 export type CreatedOrderWithItems = Prisma.OrderGetPayload<{
   include: {
     buyer: true;

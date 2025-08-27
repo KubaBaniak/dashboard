@@ -14,6 +14,7 @@ import {
   CreatedOrderWithItems,
   OrderItemForProductCreation,
   OrderItemRow,
+  OrderWithItems,
   OrderWithItemsRow,
 } from "./types/types";
 import { ProductsService } from "src/products/products.service";
@@ -88,7 +89,7 @@ export class OrdersService {
     );
   }
 
-  getOrderById(orderId: number): Promise<Order | null> {
+  getOrderById(orderId: number): Promise<OrderWithItems | null> {
     return this.ordersRepository.getOrderById(orderId);
   }
 
@@ -120,7 +121,10 @@ export class OrdersService {
       throw new NotFoundException(`Order with ID ${orderId} not found`);
     }
 
-    return this.ordersRepository.deleteOrder(orderId);
+    const productIdsWithQty = order.items.map(item => ({ productId: item.productId, qty: item.quantity }));
+    const itemOrderIds = order.items.map(item => item.id);
+
+    return this.ordersRepository.deleteOrder(orderId, itemOrderIds, productIdsWithQty);
   }
 
   private lifetime(items: OrderItemRow[]): number {
