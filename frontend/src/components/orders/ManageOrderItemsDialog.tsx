@@ -65,7 +65,14 @@ export default function ManageOrderItemsDialog({
   const removeItem = useRemoveOrderItem();
   const { data: products = [], isLoading: prodLoading } = useProductOptions();
 
-  const { register, handleSubmit, setValue, reset, watch } = useForm<AddForm>({
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    watch,
+    formState: { errors },
+  } = useForm<AddForm>({
     defaultValues: { productId: null, quantity: 1 },
     mode: "onChange",
   });
@@ -84,11 +91,12 @@ export default function ManageOrderItemsDialog({
     if (!values.productId || values.quantity < 1) return;
     setSaving(true);
     try {
-      await addItem.mutateAsync({
+      const res = await addItem.mutateAsync({
         orderId,
         productId: values.productId,
         quantity: values.quantity,
       });
+      console.log(res);
       reset({ productId: null, quantity: 1 });
       await refetch();
     } finally {
@@ -116,7 +124,6 @@ export default function ManageOrderItemsDialog({
           <DialogTitle>Manage items — order #{orderId}</DialogTitle>
         </DialogHeader>
 
-        {/* Add row */}
         <form
           className="flex flex-col gap-2 sm:flex-row sm:items-end"
           onSubmit={handleSubmit(onAdd)}
@@ -194,6 +201,12 @@ export default function ManageOrderItemsDialog({
             </Popover>
           </div>
 
+          {errors.productId && (
+            <p className="text-sm text-red-600 mt-1">
+              Error occured while picking product {errors.productId.message}
+            </p>
+          )}
+
           <div className="sm:w-32">
             <label className="text-sm font-medium">Qty</label>
             <Input
@@ -207,6 +220,11 @@ export default function ManageOrderItemsDialog({
               })}
             />
           </div>
+          {errors.quantity && (
+            <p className="text-sm text-red-600 mt-1">
+              {errors.quantity.message}
+            </p>
+          )}
 
           <Button type="submit" disabled={!canSubmit}>
             {saving ? "Adding…" : "Add item"}

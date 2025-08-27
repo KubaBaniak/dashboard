@@ -1,6 +1,8 @@
 import api from "@/lib/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { OrderStatus } from "@/components/orders/types";
+import { getApiErrorMessage } from "@/lib/api-error";
+import { toast } from "sonner";
 
 type Vars = { orderId: number; status: OrderStatus };
 
@@ -65,6 +67,10 @@ export function useAddOrderItem() {
         { withCredentials: true },
       );
       return res.data;
+    },
+    onError: (err) => {
+      const msg = getApiErrorMessage(err);
+      toast.error(msg);
     },
     onSuccess: (_data, vars) => {
       qc.invalidateQueries({ queryKey: ["orderItems", vars.orderId] });

@@ -28,7 +28,7 @@ export class OrderItemsService {
     }
 
     if (product.stockQuantity < dto.quantity) {
-      throw new BadRequestException("Quantity bigger than stock quantity");
+      throw new BadRequestException("Provided quantity is bigger than the current stock quantity");
     }
 
     if (!order) {
