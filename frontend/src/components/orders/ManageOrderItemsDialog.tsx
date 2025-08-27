@@ -21,7 +21,22 @@ import {
 } from "@/components/ui/table";
 import { formatCurrency } from "@/components/utils/format-currency";
 import { useOrderItems } from "@/hooks/orders/useOrderItems";
-// import { useAddOrderItem, useRemoveOrderItem } from "@/hooks/orders/useOrderMutations";
+import {
+  useAddOrderItem,
+  useRemoveOrderItem,
+} from "@/hooks/orders/useOrderMutations";
+import { useProductOptions } from "@/hooks/products/useProductsOptions";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Check, ChevronsUpDown } from "lucide-react";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "../ui/command";
+import { cn } from "@/lib/utils";
 
 type Props = {
   orderId: number;
@@ -31,7 +46,7 @@ type Props = {
   locale?: string;
 };
 
-type AddForm = { productId: number; quantity: number };
+type AddForm = { productId: number | null; quantity: number };
 
 export default function ManageOrderItemsDialog({
   orderId,
@@ -46,23 +61,35 @@ export default function ManageOrderItemsDialog({
     isError,
     refetch,
   } = useOrderItems(orderId);
-  // const addItem = useAddOrderItem();
-  // const removeItem = useRemoveOrderItem();
+  const addItem = useAddOrderItem();
+  const removeItem = useRemoveOrderItem();
+  const { data: products = [], isLoading: prodLoading } = useProductOptions();
 
-  const { register, handleSubmit, reset, formState } = useForm<AddForm>({
-    defaultValues: { productId: undefined as any, quantity: 1 },
+  const { register, handleSubmit, setValue, reset, watch } = useForm<AddForm>({
+    defaultValues: { productId: null, quantity: 1 },
     mode: "onChange",
   });
 
   const [saving, setSaving] = useState(false);
+  const [prodOpen, setProdOpen] = useState(false);
 
-  const total = items.reduce((s, i) => s + i.lineTotal, 0);
+  const selectedProductId = watch("productId");
+  const selectedProduct =
+    products.find((p) => Number(p.id) === Number(selectedProductId ?? -1)) ??
+    null;
+
+  const total = items.reduce((s, i) => s + Number(i.lineTotal), 0);
 
   async function onAdd(values: AddForm) {
+    if (!values.productId || values.quantity < 1) return; // simple guard
     setSaving(true);
     try {
-      // await addItem.mutateAsync({ orderId, ...values });
-      reset({ productId: undefined as any, quantity: 1 });
+      await addItem.mutateAsync({
+        orderId,
+        productId: values.productId,
+        quantity: values.quantity,
+      });
+      reset({ productId: null, quantity: 1 });
       await refetch();
     } finally {
       setSaving(false);
@@ -72,12 +99,15 @@ export default function ManageOrderItemsDialog({
   async function onRemove(itemId: number) {
     setSaving(true);
     try {
-      // await removeItem.mutateAsync({ orderItemId: itemId });
+      await removeItem.mutateAsync({ orderItemId: itemId, orderId });
       await refetch();
     } finally {
       setSaving(false);
     }
   }
+
+  const canSubmit =
+    !!selectedProductId && Number(watch("quantity")) >= 1 && !saving;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -91,28 +121,98 @@ export default function ManageOrderItemsDialog({
           className="flex flex-col gap-2 sm:flex-row sm:items-end"
           onSubmit={handleSubmit(onAdd)}
         >
-          <div className="sm:w-40">
-            <label className="text-sm font-medium">Product ID</label>
-            <Input
-              type="number"
-              min={1}
-              {...register("productId", { valueAsNumber: true })}
-            />
+          <input
+            type="hidden"
+            {...register("productId", { valueAsNumber: true })}
+          />
+
+          <div className="sm:w-56">
+            <label className="text-sm font-medium">Product</label>
+            <Popover open={prodOpen} onOpenChange={setProdOpen} modal={true}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  className="w-full justify-between"
+                  disabled={prodLoading}
+                  aria-expanded={prodOpen}
+                >
+                  {selectedProduct
+                    ? (selectedProduct.title ?? `#${selectedProduct.id}`)
+                    : "Select product"}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+
+              <PopoverContent
+                className="p-0 w-[360px]"
+                align="start"
+                onCloseAutoFocus={(e) => e.preventDefault()}
+              >
+                <Command loop>
+                  <CommandInput
+                    placeholder="Type to search products…"
+                    autoFocus
+                  />
+                  <CommandList>
+                    <CommandEmpty>No products.</CommandEmpty>
+                    <CommandGroup>
+                      {products.map((p) => {
+                        const id = Number(p.id);
+                        const productTitle = (p.title ?? `#${id}`).trim();
+                        const checked = Number(selectedProductId) === id;
+
+                        return (
+                          <CommandItem
+                            key={id}
+                            value={productTitle.toLowerCase()}
+                            keywords={[String(id)]}
+                            onMouseDown={(e) => e.preventDefault()}
+                            onSelect={() => {
+                              setValue("productId", id, {
+                                shouldValidate: true,
+                                shouldDirty: true,
+                              });
+                              setProdOpen(false);
+                            }}
+                            className="flex items-center justify-between"
+                          >
+                            <span className="truncate">{productTitle}</span>
+                            <Check
+                              className={cn(
+                                "h-4 w-4",
+                                checked ? "opacity-100" : "opacity-0",
+                              )}
+                            />
+                          </CommandItem>
+                        );
+                      })}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
           </div>
+
           <div className="sm:w-32">
             <label className="text-sm font-medium">Qty</label>
             <Input
               type="number"
               min={1}
-              {...register("quantity", { valueAsNumber: true })}
+              step={1}
+              {...register("quantity", {
+                valueAsNumber: true,
+                min: 1,
+                required: true,
+              })}
             />
           </div>
-          <Button type="submit" disabled={!formState.isValid || saving}>
+
+          <Button type="submit" disabled={!canSubmit}>
             {saving ? "Adding…" : "Add item"}
           </Button>
         </form>
 
-        {/* Items list */}
         <div className="overflow-auto mt-3">
           <Table>
             <TableCaption className="text-left">Current items</TableCaption>
@@ -165,10 +265,10 @@ export default function ManageOrderItemsDialog({
                     <TableCell>{it.productSku}</TableCell>
                     <TableCell className="text-right">{it.quantity}</TableCell>
                     <TableCell className="text-right">
-                      {formatCurrency(it.unitPrice, locale, currency)}
+                      {formatCurrency(Number(it.unitPrice), locale, currency)}
                     </TableCell>
                     <TableCell className="text-right">
-                      {formatCurrency(it.lineTotal, locale, currency)}
+                      {formatCurrency(Number(it.lineTotal), locale, currency)}
                     </TableCell>
                     <TableCell className="text-right">
                       <Button
@@ -188,7 +288,7 @@ export default function ManageOrderItemsDialog({
 
           <div className="mt-3 flex items-center justify-end text-sm">
             <span className="font-semibold mr-2">Total:</span>
-            {formatCurrency(total, locale, currency)}
+            {formatCurrency(Number(total), locale, currency)}
           </div>
         </div>
       </DialogContent>

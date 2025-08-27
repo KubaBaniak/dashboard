@@ -1,6 +1,7 @@
-import { IsOptional, IsString, IsInt, ValidateNested, IsArray } from "class-validator";
+import { IsOptional, IsString, IsInt, ValidateNested, IsArray, IsEnum } from "class-validator";
 import { Type } from "class-transformer";
 import { UpdateOrderItemDto } from "../../order-items/dto/update-order-item.dto";
+import { OrderStatus } from "@prisma/client";
 
 export class UpdateOrderDto {
   @IsOptional()
@@ -20,4 +21,8 @@ export class UpdateOrderDto {
   @ValidateNested({ each: true })
   @Type(() => UpdateOrderItemDto)
   items?: UpdateOrderItemDto[];
+
+  @IsOptional()
+  @IsEnum(OrderStatus)
+  status: OrderStatus;
 }

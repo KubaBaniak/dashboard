@@ -10,7 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-// import { useDeleteOrder } from "@/hooks/orders/useOrderMutations";
+import { useDeleteOrder } from "@/hooks/orders/useOrderMutations";
 
 type Props = {
   orderId: number;
@@ -23,13 +23,13 @@ export default function DeleteOrderDialog({
   open,
   onOpenChange,
 }: Props) {
-  // const del = useDeleteOrder();
+  const del = useDeleteOrder();
   const [loading, setLoading] = useState(false);
 
   async function onConfirm() {
     setLoading(true);
     try {
-      // await del.mutateAsync(orderId);
+      await del.mutateAsync(orderId);
       onOpenChange(false);
     } finally {
       setLoading(false);

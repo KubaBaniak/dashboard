@@ -17,12 +17,17 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-// import { useUpdateOrder } from "@/hooks/orders/useOrderMutations";
+import { useUpdateOrder } from "@/hooks/orders/useOrderMutations";
+import {
+  BaseUpdateOrderInput,
+  baseUpdateOrderSchema,
+} from "@/lib/validation-schemas/updateOrderSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { OrderStatus } from "./types";
 
 type Props = {
   order: {
     id: number;
-    buyerId: number;
     status: "PENDING" | "PAID" | "SHIPPED" | "CANCELLED";
     shippingAddress: string;
     billingAddress: string;
@@ -31,30 +36,32 @@ type Props = {
   onOpenChange: (v: boolean) => void;
 };
 
-type FormValues = {
-  status: "PENDING" | "PAID" | "SHIPPED" | "CANCELLED";
-  shippingAddress: string;
-  billingAddress: string;
-};
-
 export default function EditOrderDialog({ order, open, onOpenChange }: Props) {
-  // const update = useUpdateOrder();
+  const update = useUpdateOrder();
   const [saving, setSaving] = useState(false);
 
-  const { register, handleSubmit, setValue, formState, reset } =
-    useForm<FormValues>({
-      defaultValues: {
-        status: order.status,
-        shippingAddress: order.shippingAddress,
-        billingAddress: order.billingAddress,
-      },
-      mode: "onChange",
-    });
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { isValid, errors },
+    reset,
+  } = useForm<BaseUpdateOrderInput>({
+    resolver: zodResolver(baseUpdateOrderSchema),
+    mode: "onChange",
+    defaultValues: {
+      id: order.id,
+      status: order.status,
+      shippingAddress: order.shippingAddress,
+      billingAddress: order.billingAddress,
+    },
+  });
 
-  async function onSubmit(values: FormValues) {
+  async function onSubmit(values: BaseUpdateOrderInput) {
     setSaving(true);
     try {
-      // await update.mutateAsync({ orderId: order.id, ...values });
+      await update.mutateAsync({ orderId: order.id, data: values });
+      reset(values);
       onOpenChange(false);
     } finally {
       setSaving(false);
@@ -75,12 +82,14 @@ export default function EditOrderDialog({ order, open, onOpenChange }: Props) {
         </DialogHeader>
 
         <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+          <input type="hidden" {...register("id", { valueAsNumber: true })} />
+
           <div className="space-y-2">
             <label className="text-sm font-medium">Status</label>
             <Select
               defaultValue={order.status}
               onValueChange={(v) =>
-                setValue("status", v as FormValues["status"], {
+                setValue("status", v as OrderStatus, {
                   shouldDirty: true,
                   shouldValidate: true,
                 })
@@ -97,16 +106,29 @@ export default function EditOrderDialog({ order, open, onOpenChange }: Props) {
               </SelectContent>
             </Select>
           </div>
+          {errors.status && (
+            <p className="text-sm text-red-600 mt-1">{errors.status.message}</p>
+          )}
 
           <div>
             <label className="text-sm font-medium">Shipping address</label>
             <Input {...register("shippingAddress")} />
           </div>
+          {errors.shippingAddress && (
+            <p className="text-sm text-red-600 mt-1">
+              {errors.shippingAddress.message}
+            </p>
+          )}
 
           <div>
             <label className="text-sm font-medium">Billing address</label>
             <Input {...register("billingAddress")} />
           </div>
+          {errors.billingAddress && (
+            <p className="text-sm text-red-600 mt-1">
+              {errors.billingAddress.message}
+            </p>
+          )}
 
           <div className="flex justify-end gap-2 pt-2">
             <Button
@@ -116,7 +138,7 @@ export default function EditOrderDialog({ order, open, onOpenChange }: Props) {
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={!formState.isValid || saving}>
+            <Button type="submit" disabled={!isValid || saving}>
               {saving ? "Saving…" : "Save"}
             </Button>
           </div>

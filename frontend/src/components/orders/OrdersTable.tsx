@@ -63,6 +63,8 @@ export default function OrdersTable() {
               <TableHead className="w-[110px]">Order</TableHead>
               <TableHead>Date</TableHead>
               <TableHead>Buyer</TableHead>
+              <TableHead>Shipping Address</TableHead>
+              <TableHead>Billing Address</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Items</TableHead>
               <TableHead className="text-right">Total</TableHead>
@@ -111,6 +113,8 @@ export default function OrdersTable() {
                     <TableCell className="font-medium">#{o.id}</TableCell>
                     <TableCell>{date}</TableCell>
                     <TableCell>{o.buyerName ?? o.buyerEmail}</TableCell>
+                    <TableCell>{o.billingAddress}</TableCell>
+                    <TableCell>{o.shippingAddress}</TableCell>
                     <TableCell>
                       <UpdateStatusDropdown status={o.status} orderId={o.id} />
                     </TableCell>

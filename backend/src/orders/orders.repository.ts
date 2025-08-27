@@ -53,6 +53,7 @@ export class OrdersRepository {
     return this.prisma.order.update({
       where: { id },
       data: {
+        status: data.status,
         shippingAddress: data.shippingAddress,
         billingAddress: data.billingAddress,
       },
