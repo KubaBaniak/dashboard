@@ -22,4 +22,10 @@ export class ListOrdersQueryDto {
   @IsOptional()
   @IsString()
   status?: OrderStatus | "";
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  buyerId?: number;
 }

@@ -93,9 +93,11 @@ export class OrdersRepository {
       where.OR = [
         { buyer: { name: { contains: q, mode: "insensitive" } } },
         { buyer: { email: { contains: q, mode: "insensitive" } } },
-        ...(Number.isFinite(maybeId) ? [{ id: maybeId }] : []),
+        ...(Number.isInteger(maybeId) ? [{ id: maybeId }] : []),
       ];
     }
+
+    if (query.buyerId) where.buyerId = query.buyerId;
 
     const [total, rows] = await Promise.all([
       this.prisma.order.count({ where }),

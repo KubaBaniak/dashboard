@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { MoreVertical, Info, Pencil, Trash2 } from "lucide-react";
+import { MoreVertical, Info, Pencil, Trash2, ListOrdered } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,6 +13,7 @@ import {
 import ClientDetailsDrawer from "@/components/clients/ClientDetailsDrawer";
 import EditClientDialog from "@/components/clients/EditClientsDialog";
 import DeleteClientDialog from "@/components/clients/DeleteClientDialog";
+import ClientOrdersDialog from "./ClientOrdersDialog";
 
 type Props = {
   client: {
@@ -31,6 +32,7 @@ export default function ClientActionsMenu({ client }: Props) {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [ordersOpen, setOrdersOpen] = useState(false);
 
   return (
     <>
@@ -49,13 +51,24 @@ export default function ClientActionsMenu({ client }: Props) {
         <DropdownMenuContent align="end" className="w-44">
           <DropdownMenuItem
             onSelect={(e) => {
-              e.preventDefault(); // stop Radix default behavior if needed
-              setMenuOpen(false); // close the menu
-              setDetailsOpen(true); // open drawer
+              e.preventDefault();
+              setMenuOpen(false);
+              setDetailsOpen(true);
             }}
           >
             <Info className="mr-2 h-4 w-4" />
             Details
+          </DropdownMenuItem>
+
+          <DropdownMenuItem
+            onSelect={(e) => {
+              e.preventDefault();
+              setMenuOpen(false);
+              setOrdersOpen(true);
+            }}
+          >
+            <ListOrdered className="mr-2 h-4 w-4" />
+            Orders…
           </DropdownMenuItem>
 
           <DropdownMenuItem
@@ -90,6 +103,13 @@ export default function ClientActionsMenu({ client }: Props) {
         open={detailsOpen}
         onOpenChange={setDetailsOpen}
       />
+
+      <ClientOrdersDialog
+        client={client}
+        open={ordersOpen}
+        onOpenChange={setOrdersOpen}
+      />
+
       <EditClientDialog
         client={client}
         open={editOpen}
