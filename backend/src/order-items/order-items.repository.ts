@@ -13,13 +13,24 @@ export class OrderItemsRepository {
 
   create(data: CreateOrderItemDto, productPrice: Decimal): Promise<OrderItem> {
     const { orderId, productId, quantity } = data;
-    return this.prisma.orderItem.create({
-      data: {
-        orderId,
-        productId,
-        quantity,
-        price: productPrice,
-      },
+    return this.prisma.$transaction(async tx => {
+      const created = await tx.orderItem.create({
+        data: {
+          orderId,
+          productId,
+          quantity,
+          price: productPrice,
+        },
+      });
+
+      await tx.product.update({
+        where: { id: productId },
+        data: {
+          stockQuantity: { decrement: quantity },
+        },
+      });
+
+      return created;
     });
   }
 

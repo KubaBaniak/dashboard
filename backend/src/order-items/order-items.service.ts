@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { OrderItemsRepository } from "./order-items.repository";
 import { CreateOrderItemDto } from "./dto/create-order-item.dto";
 import { UpdateOrderItemDto } from "./dto/update-order-item.dto";
@@ -25,6 +25,10 @@ export class OrderItemsService {
 
     if (!product) {
       throw new NotFoundException("PRODUCT NOT FOUND");
+    }
+
+    if (product.stockQuantity < dto.quantity) {
+      throw new BadRequestException("Quantity bigger than stock quantity");
     }
 
     if (!order) {

@@ -60,8 +60,8 @@ export function useAddOrderItem() {
     }) => {
       const { orderId, productId, quantity } = params;
       const res = await api.post(
-        `/orders/${orderId}/items`,
-        { productId, quantity },
+        `/order-items`,
+        { orderId, productId, quantity },
         { withCredentials: true },
       );
       return res.data;
@@ -69,6 +69,7 @@ export function useAddOrderItem() {
     onSuccess: (_data, vars) => {
       qc.invalidateQueries({ queryKey: ["orderItems", vars.orderId] });
       qc.invalidateQueries({ queryKey: ["orders"] });
+      qc.invalidateQueries({ queryKey: ["products"] });
       qc.invalidateQueries({ queryKey: ["order", vars.orderId] });
     },
   });
