@@ -12,6 +12,7 @@ import { GetClientIdsQueryDto } from "./dto/get-client-ids.query.dto";
 import { BulkDeleteClientsDto } from "./dto/bulk-delete-clients.dto";
 import { ExportClientsQueryDto } from "./dto/export-clients.query.dto";
 import { Readable } from "stream";
+import { GetClientsOptions } from "./dto/get-client-options.dto";
 
 @Injectable()
 export class ClientsService {
@@ -50,6 +51,11 @@ export class ClientsService {
     }
 
     return this.clientsRepository.createClient(data);
+  }
+
+  async getOptions(): Promise<GetClientsOptions[]> {
+    const rows = await this.clientsRepository.findOptions();
+    return rows.map(r => ({ id: r.id, email: r.email, name: r.email }));
   }
 
   async getBaseClientsDetails(query: GetClientsQueryDto): Promise<PagedResponse<ClientRowDto>> {

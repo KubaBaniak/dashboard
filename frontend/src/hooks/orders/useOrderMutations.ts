@@ -6,6 +6,36 @@ import { toast } from "sonner";
 
 type Vars = { orderId: number; status: OrderStatus };
 
+type CreateOrder = {
+  buyerId: number;
+  shippingAddress: string;
+  billingAddress: string;
+  items: { productId: number; quantity: number }[];
+};
+
+export function useCreateOrder() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: CreateOrder) => {
+      const res = await api.post("/orders", input, {
+        withCredentials: true,
+      });
+      return res.data;
+    },
+    onError: (err) => {
+      const msg = getApiErrorMessage(err);
+      toast.error(msg);
+    },
+    onSuccess: () => {
+      toast.success("Order created successfully");
+      qc.invalidateQueries({ queryKey: ["orders"] });
+      qc.invalidateQueries({ queryKey: ["order"] });
+      qc.invalidateQueries({ queryKey: ["orderItems"] });
+      qc.invalidateQueries({ queryKey: ["clientOrders"] });
+    },
+  });
+}
+
 export function useUpdateOrder() {
   const qc = useQueryClient();
   return useMutation({

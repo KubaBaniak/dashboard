@@ -134,7 +134,7 @@ export default function ClientDetailsDrawer({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-2 gap-3">
             <StatCard
               title="Orders"
               value={stats ? stats.totalOrders : "—"}
@@ -199,7 +199,6 @@ export default function ClientDetailsDrawer({
             )}
           </div>
 
-          {/* Recent Orders */}
           <div className="rounded-2xl border bg-card p-4 shadow-sm">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-base font-semibold">Recent Orders</h3>

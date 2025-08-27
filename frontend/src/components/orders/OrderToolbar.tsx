@@ -6,6 +6,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "../ui/input";
+import CreateOrderDialog from "./CreateOrderDialog";
 
 interface OrdersToolbarProps {
   pageSize: number;
@@ -71,6 +72,7 @@ export default function OrdersToolbar({
           onChange={(e) => onQueryChange(e.target.value)}
           className="w-full sm:w-[280px]"
         />
+        <CreateOrderDialog />
       </div>
     </div>
   );

@@ -50,7 +50,7 @@ export class OrdersService {
     return this.prismaService.$transaction(
       async tx => {
         const products = await this.productsService.getProductsByIdList(ids, tx);
-        if (!products) throw new NotFoundException();
+        if (products.length === 0) throw new NotFoundException();
         const byId = new Map<number, Product>(products.map((p: Product): [number, Product] => [p.id, p]));
         const missing = ids.filter(id => !byId.has(id));
         if (missing.length) throw new NotFoundException(`Products not found: ${missing.join(", ")}`);
@@ -58,9 +58,9 @@ export class OrdersService {
         for (const it of merged) {
           const ok = await this.productsService.decrementStockConditional(it.productId, it.quantity, tx);
           if (!ok) {
-            const p = byId.get(it.productId)!;
+            const product = byId.get(it.productId)!;
             throw new BadRequestException(
-              `Insufficient stock for product ${it.productId} (requested ${it.quantity}, available ${p.stockQuantity})`,
+              `Insufficient stock for product ${product.title} (requested ${it.quantity}, available ${product.stockQuantity})`,
             );
           }
         }

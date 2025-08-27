@@ -27,6 +27,7 @@ import { GetClientIdsQueryDto } from "./dto/get-client-ids.query.dto";
 import { BulkDeleteClientsDto } from "./dto/bulk-delete-clients.dto";
 import { ExportClientsQueryDto } from "./dto/export-clients.query.dto";
 import { Response } from "express";
+import { GetClientsOptions } from "./dto/get-client-options.dto";
 
 @Controller("clients")
 export class ClientsController {
@@ -44,6 +45,13 @@ export class ClientsController {
   @Get()
   getAllClients(@Query() query: GetClientsQueryDto): Promise<PagedResponse<ClientRowDto>> {
     return this.clientsService.getBaseClientsDetails(query);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  @Get("options")
+  getClientsOptions(): Promise<GetClientsOptions[]> {
+    return this.clientsService.getOptions();
   }
 
   @HttpCode(HttpStatus.OK)

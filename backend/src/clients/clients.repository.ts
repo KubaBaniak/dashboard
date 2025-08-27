@@ -4,6 +4,7 @@ import { PrismaService } from "../database/prisma.service";
 import { CreateClientDto } from "./dto/create-client.dto";
 import { ClientExportRow, FindPagedBaseClients } from "./types/types";
 import { PagedArgs } from "src/common/dto/paged-args.dto";
+import { GetClientsOptions } from "./dto/get-client-options.dto";
 
 @Injectable()
 export class ClientsRepository {
@@ -20,6 +21,13 @@ export class ClientsRepository {
         company,
         orders: undefined,
       },
+    });
+  }
+
+  findOptions(): Promise<GetClientsOptions[]> {
+    return this.prismaService.client.findMany({
+      select: { id: true, email: true, name: true },
+      orderBy: { email: "asc" },
     });
   }
 
