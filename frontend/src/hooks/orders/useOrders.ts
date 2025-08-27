@@ -1,6 +1,6 @@
 import { OrdersResponse } from "@/components/orders/types";
 import api from "@/lib/api";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 type UseOrdersArgs = {
   page: number;
@@ -23,5 +23,6 @@ export function useOrders({ page, pageSize, q, status }: UseOrdersArgs) {
       });
       return data;
     },
+    placeholderData: keepPreviousData,
   });
 }
