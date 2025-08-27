@@ -8,10 +8,8 @@ import { useAuth } from "@/hooks/useAuth";
 import CenteredSpinner from "@/components/utils/CenteredSpinner";
 
 import { SiteHeader } from "@/components/ui/site-header";
-import { SectionCards } from "@/components/dashboard/SectionCards";
-import { RecentOrdersTable } from "@/components/dashboard/RecentOrdersTable";
-import { ClientSummaryCards } from "@/components/dashboard/ClientSummaryCards";
 import ClientsTable from "@/components/clients/ClientsTable";
+import BulkActionsToolbar from "@/components/clients/BulkActionsToolbar";
 
 export default function ClientsPage() {
   const { data: user, isLoading } = useAuth();

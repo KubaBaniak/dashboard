@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { Client, Prisma } from "@prisma/client";
 import { PrismaService } from "../database/prisma.service";
 import { CreateClientDto } from "./dto/create-client.dto";
-import { FindPagedBaseClients } from "./types/types";
+import { ClientExportRow, FindPagedBaseClients } from "./types/types";
 import { PagedArgs } from "src/common/dto/paged-args.dto";
 
 @Injectable()
@@ -56,11 +56,74 @@ export class ClientsRepository {
     return this.prismaService.client.findUnique({ where: { id } });
   }
 
+  async findIds(where: Prisma.ClientWhereInput | undefined, take: number): Promise<{ ids: number[]; total: number }> {
+    const [total, rows] = await this.prismaService.$transaction([
+      this.prismaService.client.count({ where }),
+      this.prismaService.client.findMany({
+        where,
+        select: { id: true },
+        orderBy: { id: "asc" },
+        take,
+      }),
+    ]);
+
+    return { total, ids: rows.map(r => r.id) };
+  }
+
   updateClient(clientId: number, data: Prisma.ClientUpdateInput): Promise<Client> {
     return this.prismaService.client.update({ where: { id: clientId }, data });
   }
 
   deleteClient(clientId: number): Promise<Client> {
     return this.prismaService.client.delete({ where: { id: clientId } });
+  }
+
+  deleteManyWhereNoOrders(ids: number[]) {
+    return this.prismaService.client.deleteMany({
+      where: {
+        id: { in: ids },
+        orders: { none: {} },
+      },
+    });
+  }
+
+  async findIdsWithOrders(ids: number[]): Promise<number[]> {
+    if (!ids.length) return [];
+    const rows = await this.prismaService.client.findMany({
+      where: { id: { in: ids }, orders: { some: {} } },
+      select: { id: true },
+    });
+    return rows.map(r => r.id);
+  }
+
+  async findExistingIds(ids: number[]): Promise<number[]> {
+    if (!ids.length) return [];
+    const rows = await this.prismaService.client.findMany({
+      where: { id: { in: ids } },
+      select: { id: true },
+    });
+    return rows.map(r => r.id);
+  }
+
+  async findPageForExport(
+    where: Prisma.ClientWhereInput | undefined,
+    take: number,
+    cursorId?: number,
+  ): Promise<ClientExportRow[]> {
+    return this.prismaService.client.findMany({
+      where,
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        phone: true,
+        address: true,
+        company: true,
+        createdAt: true,
+      },
+      take,
+      ...(cursorId ? { skip: 1, cursor: { id: cursorId } } : {}),
+      orderBy: { id: "asc" },
+    });
   }
 }

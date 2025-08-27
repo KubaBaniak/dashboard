@@ -1,4 +1,6 @@
-import { Prisma } from "@prisma/client";
+import { Client, Prisma } from "@prisma/client";
+
+export type ClientExportRow = Pick<Client, "id" | "email" | "name" | "phone" | "address" | "company" | "createdAt">;
 
 export type BaseClient = Prisma.ClientGetPayload<{
   select: {
