@@ -13,11 +13,16 @@ import { BulkDeleteClientsDto } from "./dto/bulk-delete-clients.dto";
 import { ExportClientsQueryDto } from "./dto/export-clients.query.dto";
 import { Readable } from "stream";
 import { GetClientsOptions } from "./dto/get-client-options.dto";
+import { ClientLatestDto } from "./dto/client-latest.dto";
+import { ClientTopDto } from "./dto/client-top.dto";
+import { OrderItemsService } from "src/order-items/order-items.service";
+import { ClientBasic } from "./types/types";
 
 @Injectable()
 export class ClientsService {
   constructor(
     private readonly clientsRepository: ClientsRepository,
+    private readonly orderItemsService: OrderItemsService,
     @Inject(forwardRef(() => OrdersService)) private readonly ordersService: OrdersService,
   ) {}
 
@@ -184,5 +189,44 @@ export class ClientsService {
     const hardLimit = query.limit ?? 100_000;
     const pageSize = 1000;
     return Readable.from(this.csvRows(where, hardLimit, pageSize));
+  }
+
+  async getLatestClients(limit = 6): Promise<ClientLatestDto[]> {
+    const rows = await this.clientsRepository.findLatest(limit);
+    return rows.map(r => ({
+      id: r.id,
+      email: r.email,
+      name: r.name ?? null,
+      createdAt: r.createdAt.toISOString(),
+    }));
+  }
+
+  async getTopClients(limit = 6): Promise<ClientTopDto[]> {
+    const items = await this.orderItemsService.findOrderItemsWithBuyer();
+
+    const totals = new Map<number, number>();
+    for (const it of items) {
+      const buyerId = it.order.buyerId;
+      const unit = Number(it.price);
+      const add = unit * it.quantity;
+      totals.set(buyerId, (totals.get(buyerId) ?? 0) + add);
+    }
+
+    const topPairs = [...totals.entries()].sort((a, b) => b[1] - a[1]).slice(0, limit);
+
+    const topIds = topPairs.map(([buyerId]) => buyerId);
+    const clients = await this.clientsRepository.findClientsByIds(topIds);
+
+    const byId = new Map<number, ClientBasic>(clients.map((c): [number, ClientBasic] => [c.id, c]));
+
+    return topPairs.map(([buyerId, totalSpent]) => {
+      const c = byId.get(buyerId);
+      return {
+        id: buyerId,
+        email: c?.email ?? "",
+        name: c?.name ?? null,
+        totalSpent: Math.round(totalSpent * 100) / 100,
+      };
+    });
   }
 }

@@ -60,6 +60,10 @@ export class OrderItemsService {
     return item;
   }
 
+  findOrderItemsWithBuyer() {
+    return this.orderItemsRepository.findOrderItemsWithBuyer();
+  }
+
   async update(id: number, dto: UpdateOrderItemDto): Promise<OrderItem> {
     const item = await this.orderItemsRepository.getById(id);
     if (!item) {

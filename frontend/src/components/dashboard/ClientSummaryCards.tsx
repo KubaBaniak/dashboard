@@ -1,96 +1,91 @@
+// components/dashboard/ClientSummaryCards.tsx
+"use client";
+
+import {
+  useLatestClients,
+  useTopClients,
+} from "@/hooks/dashboard/useClientSummary";
 import { ClientCard } from "../clients/ClientCard";
 
-const formatDate = (isoDate: string) =>
-  new Intl.DateTimeFormat("en-US", {
+const formatDate = (isoDate: string, locale = "en-US") =>
+  new Intl.DateTimeFormat(locale, {
     year: "numeric",
     month: "short",
     day: "numeric",
   }).format(new Date(isoDate));
 
-const formatCurrency = (value: number) =>
-  new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(value);
-
-const latestClients = [
-  {
-    id: 1,
-    name: "Anna Kowalska",
-    email: "anna@example.com",
-    createdAt: "2025-08-05T10:00:00Z",
-  },
-  {
-    id: 2,
-    name: "Piotr Nowak",
-    email: "piotr@example.com",
-    createdAt: "2025-08-04T12:30:00Z",
-  },
-  {
-    id: 3,
-    name: "Ewa Zielińska",
-    email: "ewa@example.com",
-    createdAt: "2025-08-03T15:45:00Z",
-  },
-];
-
-const topClients = [
-  {
-    id: 4,
-    name: "Tomasz Wiśniewski",
-    email: "tomasz@example.com",
-    totalSpent: 1520.75,
-  },
-  {
-    id: 5,
-    name: "Katarzyna Lewandowska",
-    email: "katarzyna@example.com",
-    totalSpent: 1340.0,
-  },
-  {
-    id: 6,
-    name: "Marcin Wójcik",
-    email: "marcin@example.com",
-    totalSpent: 980.5,
-  },
-];
+const formatCurrency = (value: number, locale = "pl-PL", currency = "PLN") =>
+  new Intl.NumberFormat(locale, { style: "currency", currency }).format(value);
 
 export function ClientSummaryCards() {
+  const {
+    data: latest,
+    isLoading: latestLoading,
+    isError: latestErr,
+  } = useLatestClients(3);
+  const {
+    data: top,
+    isLoading: topLoading,
+    isError: topErr,
+  } = useTopClients(3);
+
   return (
     <div className="space-y-10 flex flex-col justify-evenly h-full">
       <section className="space-y-4">
         <h2 className="text-xl font-bold tracking-tight">🆕 Latest Clients</h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {latestClients.map((client) => (
-            <ClientCard
-              key={client.id}
-              name={client.name}
-              email={client.email}
-              footer={`Registered on ${formatDate(client.createdAt)}`}
-            />
-          ))}
-        </div>
+
+        {latestLoading ? (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="h-24 rounded-lg bg-muted animate-pulse" />
+            ))}
+          </div>
+        ) : latestErr ? (
+          <p className="text-sm text-red-600">Failed to load latest clients.</p>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {(latest ?? []).map((c) => (
+              <ClientCard
+                key={c.id}
+                name={c.name ?? c.email}
+                email={c.email}
+                footer={`Registered on ${formatDate(c.createdAt)}`}
+              />
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="space-y-4">
         <h2 className="text-xl font-bold tracking-tight">🏆 Top Clients</h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {topClients.map((client) => (
-            <ClientCard
-              key={client.id}
-              name={client.name}
-              email={client.email}
-              footer={
-                <>
-                  Total spent:{" "}
-                  <span className="text-foreground font-medium">
-                    {formatCurrency(client.totalSpent)}
-                  </span>
-                </>
-              }
-            />
-          ))}
-        </div>
+
+        {topLoading ? (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="h-24 rounded-lg bg-muted animate-pulse" />
+            ))}
+          </div>
+        ) : topErr ? (
+          <p className="text-sm text-red-600">Failed to load top clients.</p>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {(top ?? []).map((c) => (
+              <ClientCard
+                key={c.id}
+                name={c.name ?? c.email}
+                email={c.email}
+                footer={
+                  <>
+                    Total spent:{" "}
+                    <span className="text-foreground font-medium">
+                      {formatCurrency(c.totalSpent)}
+                    </span>
+                  </>
+                }
+              />
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );

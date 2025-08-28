@@ -90,4 +90,14 @@ export class OrderItemsRepository {
       orderBy: { id: "asc" },
     });
   }
+
+  findOrderItemsWithBuyer() {
+    return this.prisma.orderItem.findMany({
+      select: {
+        quantity: true,
+        price: true,
+        order: { select: { buyerId: true } },
+      },
+    });
+  }
 }

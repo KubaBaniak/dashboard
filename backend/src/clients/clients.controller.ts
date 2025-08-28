@@ -28,6 +28,8 @@ import { BulkDeleteClientsDto } from "./dto/bulk-delete-clients.dto";
 import { ExportClientsQueryDto } from "./dto/export-clients.query.dto";
 import { Response } from "express";
 import { GetClientsOptions } from "./dto/get-client-options.dto";
+import { ClientLatestDto } from "./dto/client-latest.dto";
+import { ClientTopDto } from "./dto/client-top.dto";
 
 @Controller("clients")
 export class ClientsController {
@@ -59,6 +61,20 @@ export class ClientsController {
   @Get("ids")
   getClientsByIds(@Query() query: GetClientIdsQueryDto): Promise<{ ids: number[]; total: number }> {
     return this.clientsService.getIds(query);
+  }
+
+  @Get("latest")
+  @HttpCode(HttpStatus.OK)
+  getLatest(@Query() q: { limit?: number }): Promise<ClientLatestDto[]> {
+    const limit = Math.min(24, Math.max(1, Number(q.limit ?? 6)));
+    return this.clientsService.getLatestClients(limit);
+  }
+
+  @Get("top")
+  @HttpCode(HttpStatus.OK)
+  getTop(@Query() q: { limit?: number }): Promise<ClientTopDto[]> {
+    const limit = Math.min(24, Math.max(1, Number(q.limit ?? 6)));
+    return this.clientsService.getTopClients(limit);
   }
 
   @HttpCode(HttpStatus.OK)

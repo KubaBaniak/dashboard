@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { Client, Prisma } from "@prisma/client";
 import { PrismaService } from "../database/prisma.service";
 import { CreateClientDto } from "./dto/create-client.dto";
-import { ClientExportRow, FindPagedBaseClients } from "./types/types";
+import { ClientBasic, ClientExportRow, FindPagedBaseClients } from "./types/types";
 import { PagedArgs } from "src/common/dto/paged-args.dto";
 import { GetClientsOptions } from "./dto/get-client-options.dto";
 
@@ -132,6 +132,22 @@ export class ClientsRepository {
       take,
       ...(cursorId ? { skip: 1, cursor: { id: cursorId } } : {}),
       orderBy: { id: "asc" },
+    });
+  }
+
+  findLatest(take: number) {
+    return this.prismaService.client.findMany({
+      orderBy: { createdAt: "desc" },
+      take,
+      select: { id: true, email: true, name: true, createdAt: true },
+    });
+  }
+
+  findClientsByIds(ids: number[]): Promise<ClientBasic[]> {
+    if (ids.length === 0) return Promise.resolve([]);
+    return this.prismaService.client.findMany({
+      where: { id: { in: ids } },
+      select: { id: true, email: true, name: true },
     });
   }
 }
