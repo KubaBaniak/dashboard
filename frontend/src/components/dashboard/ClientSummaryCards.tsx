@@ -4,7 +4,7 @@
 import {
   useLatestClients,
   useTopClients,
-} from "@/hooks/dashboard/useClientSummary";
+} from "@/hooks/clients/useClientSummary";
 import { ClientCard } from "../clients/ClientCard";
 
 const formatDate = (isoDate: string, locale = "en-US") =>

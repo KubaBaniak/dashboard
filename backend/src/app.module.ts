@@ -12,6 +12,7 @@ import { OrdersModule } from "./orders/orders.module";
 import { OrderItemsModule } from "./order-items/order-items.module";
 import { DeliveriesModule } from "./deliveries/deliveries.module";
 import * as redisStore from "cache-manager-redis-store";
+import { MetricsModule } from "./metrics/orders.module";
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import * as redisStore from "cache-manager-redis-store";
     OrdersModule,
     OrderItemsModule,
     DeliveriesModule,
+    MetricsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
