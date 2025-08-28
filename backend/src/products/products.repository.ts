@@ -71,7 +71,10 @@ export class ProductsRepository {
   }
 
   updateProduct(productId: number, data: Prisma.ProductUpdateInput): Promise<Product> {
-    return this.prismaService.product.update({ where: { id: productId }, data });
+    return this.prismaService.product.update({
+      where: { id: productId },
+      data,
+    });
   }
 
   updateProductInTx(

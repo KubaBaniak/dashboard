@@ -81,10 +81,34 @@ export class ProductsService {
     return this.productsRepository.findManyByIds(ids, db);
   }
 
-  async updateProduct(productId: number, data: UpdateProductDto): Promise<Product> {
-    const product = await this.getProductById(productId);
-    if (!product) {
+  async updateProduct(productId: number, dto: UpdateProductDto): Promise<Product> {
+    const current = await this.productsRepository.getProductById(productId);
+    if (!current) {
       throw new NotFoundException("CANNOT UPDATE PRODUCT - no product with such ID");
+    }
+
+    const data: Prisma.ProductUpdateInput = {};
+
+    if (dto.title !== undefined) data.title = dto.title;
+    if (dto.description !== undefined) data.description = dto.description;
+    if (dto.sku !== undefined) data.sku = dto.sku;
+
+    if (dto.price !== undefined) {
+      if (dto.price <= 0) throw new BadRequestException("Price must be positive");
+      data.price = new Prisma.Decimal(dto.price);
+    }
+
+    if (dto.stockQuantity !== undefined) {
+      if (dto.stockQuantity < 0) throw new BadRequestException("Stock cannot be negative");
+      const delta = dto.stockQuantity - current.stockQuantity;
+      if (delta !== 0) {
+        data.stockQuantity = delta > 0 ? { increment: delta } : { decrement: Math.abs(delta) };
+      }
+    }
+
+    if (dto.categoryIds !== undefined) {
+      const unique = Array.from(new Set(dto.categoryIds));
+      data.categories = { set: unique.map(id => ({ id })) };
     }
 
     return this.productsRepository.updateProduct(productId, data);

@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { toast } from "sonner";
 
 type PlainUser = {
   id: string;
@@ -24,6 +25,7 @@ async function fetchUser(): Promise<PlainUser | null> {
       name: data.name,
     };
   } catch {
+    toast.error("Session expired - please login");
     return null;
   }
 }

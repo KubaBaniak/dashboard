@@ -17,6 +17,7 @@ import {
 import { Badge } from "../ui/badge";
 import { useProductsList } from "@/hooks/products/useProductsList";
 import DeleteProductDialog from "./DeleteProductDialog";
+import EditProductDialog from "./EditProductDialog";
 
 export default function ProductsTable() {
   const [page, setPage] = useState(1);
@@ -49,7 +50,7 @@ export default function ProductsTable() {
       />
 
       <div className="overflow-auto">
-        <Table>
+        <Table className="w-full">
           <TableCaption className="text-left">All products</TableCaption>
           <TableHeader>
             <TableRow>
@@ -59,14 +60,17 @@ export default function ProductsTable() {
               <TableHead>SKU</TableHead>
               <TableHead className="text-right">Stock</TableHead>
               <TableHead className="text-right">Price</TableHead>
-              <TableHead className="text-center">Actions</TableHead>
+              <TableHead className="w-[160px] text-center pr-2">
+                Actions
+              </TableHead>
             </TableRow>
           </TableHeader>
+
           <TableBody>
             {rows.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={5}
+                  colSpan={7}
                   className="text-center py-10 text-muted-foreground"
                 >
                   No results.
@@ -76,26 +80,32 @@ export default function ProductsTable() {
               rows.map((p) => (
                 <TableRow key={p.id}>
                   <TableCell className="font-medium">{p.id}</TableCell>
-                  <TableCell>{p.title}</TableCell>
-                  <TableCell>
+                  <TableCell className="truncate">{p.title}</TableCell>
+                  <TableCell className="max-w-[320px]">
                     {p.categories.map((c) => (
                       <Badge key={c.id} variant="secondary" className="mr-0.5">
                         {c.name}
                       </Badge>
                     ))}
                   </TableCell>
-                  <TableCell>{p.sku}</TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="truncate">{p.sku}</TableCell>
+                  <TableCell className="text-right tabular-nums">
                     {p.stockQuantity}
                   </TableCell>
-                  <TableCell className="text-right">{p.price}</TableCell>
-                  <TableCell>
-                    <DeleteProductDialog productId={p.id} />
+                  <TableCell className="text-right tabular-nums">
+                    {p.price}
+                  </TableCell>
+                  <TableCell className="w-[160px] text-center">
+                    <div className="flex justify-end gap-2 whitespace-nowrap">
+                      <EditProductDialog product={p} />
+                      <DeleteProductDialog productId={p.id} />
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
             )}
           </TableBody>
+
           <TableFooter>
             <TableRow>
               <TableCell colSpan={3} className="font-semibold">
