@@ -1,6 +1,6 @@
 import { ProductsResponse } from "@/components/products/types";
 import api from "@/lib/api";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 type UseProductsArgs = {
   page: number;
@@ -29,6 +29,6 @@ export function useProductsList({
       return data;
     },
     staleTime: 30_000,
-    placeholderData: { data: [], page, pageSize, total: 0 },
+    placeholderData: keepPreviousData,
   });
 }

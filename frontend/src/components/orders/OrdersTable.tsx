@@ -113,8 +113,18 @@ export default function OrdersTable() {
                     <TableCell className="font-medium">#{o.id}</TableCell>
                     <TableCell>{date}</TableCell>
                     <TableCell>{o.buyerName ?? o.buyerEmail}</TableCell>
-                    <TableCell>{o.billingAddress}</TableCell>
-                    <TableCell>{o.shippingAddress}</TableCell>
+                    <TableCell
+                      className="max-w-[260px] truncate"
+                      title={o.billingAddress}
+                    >
+                      {o.billingAddress}
+                    </TableCell>
+                    <TableCell
+                      className="max-w-[260px] truncate"
+                      title={o.shippingAddress}
+                    >
+                      {o.shippingAddress}
+                    </TableCell>
                     <TableCell>
                       <UpdateStatusDropdown status={o.status} orderId={o.id} />
                     </TableCell>

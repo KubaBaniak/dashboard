@@ -35,18 +35,9 @@ export function useClientsBase({ page, pageSize, q, enabled = true }: Args) {
       return res.data;
     },
     select: (payload: any): Paged<BaseClientRow> => {
-      const rows: any[] = Array.isArray(payload)
+      const data: any[] = Array.isArray(payload)
         ? payload
         : (payload?.data ?? []);
-      const data: BaseClientRow[] = rows.map((r: BaseClientRow) => ({
-        id: Number(r.id),
-        email: String(r.email),
-        name: String(r.name),
-        phone: String(r.phone),
-        address: String(r.address),
-        company: String(r.company),
-        createdAt: String(r.createdAt),
-      }));
       const pageOut = Number(payload?.page ?? page);
       const pageSizeOut = Number(payload?.pageSize ?? pageSize);
       const total = Number(payload?.total ?? data.length);
@@ -55,5 +46,8 @@ export function useClientsBase({ page, pageSize, q, enabled = true }: Args) {
     placeholderData: keepPreviousData,
     staleTime: 30_000,
     enabled,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    retry: false,
   });
 }

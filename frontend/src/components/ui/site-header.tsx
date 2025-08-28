@@ -7,21 +7,14 @@ import { Separator } from "@/components/ui/separator";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import {
-  IconCreditCard,
-  IconDotsVertical,
-  IconLogout,
-  IconNotification,
-  IconUserCircle,
-} from "@tabler/icons-react";
+import { IconDotsVertical, IconLogout } from "@tabler/icons-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
+import { useLogout } from "@/hooks/useLogout";
 
 type User = {
   id: string | number;
@@ -49,6 +42,7 @@ function getPageTitle(pathname: string): string {
 
 export function SiteHeader({ user }: { user: User }) {
   const pathname = usePathname();
+  const logout = useLogout();
   const pageTitle = getPageTitle(pathname);
 
   const displayName = user.name ?? user.email;
@@ -57,7 +51,6 @@ export function SiteHeader({ user }: { user: User }) {
   return (
     <header className="flex h-[var(--header-height)] shrink-0 items-center gap-2 pb-4 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-[var(--header-height)]">
       <div className="flex w-full items-center justify-between px-4 lg:px-6">
-        {/* Left: Page title + sidebar trigger */}
         <div className="flex items-center gap-3">
           <SidebarTrigger className="-ml-1" />
           <Separator
@@ -92,26 +85,15 @@ export function SiteHeader({ user }: { user: User }) {
             align="end"
             sideOffset={8}
           >
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <IconUserCircle className="mr-2 h-4 w-4" />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconCreditCard className="mr-2 h-4 w-4" />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconNotification className="mr-2 h-4 w-4" />
-                Notifications
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-
-            <DropdownMenuSeparator />
-
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onSelect={(e) => {
+                e.preventDefault();
+                logout.mutate();
+              }}
+              disabled={logout.isPending}
+            >
               <IconLogout className="mr-2 h-4 w-4" />
-              Log out
+              {logout.isPending ? "Logging out…" : "Log out"}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

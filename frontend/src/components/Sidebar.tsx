@@ -23,6 +23,7 @@ import {
 
 import { NavUser } from "./ui/nav-user";
 import { NavMain } from "./ui/nav-main";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 const data = {
   user: {
@@ -61,13 +62,13 @@ const data = {
       url: "/deliveries",
       icon: IconTruckDelivery,
     },
-    // Only for admin users
-    {
-      title: "Users",
-      url: "/users",
-      icon: IconUsers,
-      adminOnly: true,
-    },
+    // Only for admin users later TODO
+    //{
+    //  title: "Users",
+    //  url: "/users",
+    //  icon: IconUsers,
+    //  adminOnly: true,
+    //},
   ],
 };
 
@@ -100,7 +101,18 @@ export function AppSidebar({
         <NavMain items={navMainFiltered} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+          <Avatar className="h-8 w-8 rounded-lg grayscale">
+            <AvatarImage src={data.user.avatar} alt={data.user.name} />
+            <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+          </Avatar>
+          <div className="grid flex-1 text-left text-sm leading-tight">
+            <span className="truncate font-medium">{data.user.name}</span>
+            <span className="text-muted-foreground truncate text-xs">
+              {data.user.email}
+            </span>
+          </div>
+        </div>
       </SidebarFooter>
     </Sidebar>
   );
