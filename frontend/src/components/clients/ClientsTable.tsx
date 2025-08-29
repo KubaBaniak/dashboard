@@ -19,7 +19,7 @@ import { useClientsBase } from "@/hooks/clients/useClientsBase";
 import ClientsToolbar from "./ClientsToolbar";
 import ClientActionsMenu from "./ClientActionsMenu";
 import BulkActionsToolbar from "./BulkActionsToolbar";
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useState } from "react";
 import { Checkbox } from "../ui/checkbox";
 import api from "@/lib/api";
 import { useDeleteClientsBulk } from "@/hooks/clients/useDeleteClientsBulk";
@@ -32,7 +32,6 @@ export default function ClientsTable() {
     pageSize,
     q,
   });
-  const [isPending, startTransition] = useTransition();
   const delBulk = useDeleteClientsBulk();
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
@@ -98,7 +97,7 @@ export default function ClientsTable() {
     }
   };
 
-  const exportSelected = async (ids: number[]) => {
+  const exportSelected = async () => {
     const API = process.env.NEXT_PUBLIC_API_URL;
     const url = `${API}/clients/export/csv?q=${encodeURIComponent(q || "")}`;
     window.open(url, "_blank", "noopener");

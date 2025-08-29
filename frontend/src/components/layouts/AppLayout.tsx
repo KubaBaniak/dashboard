@@ -13,7 +13,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   const isHiddenRoute = HIDE_SIDEBAR_ROUTES.includes(pathname);
   const isLoggedIn = !!user;
-  const userRole = user?.role === "ADMIN" ? "ADMIN" : "USER";
 
   if (isLoading) {
     return (
@@ -25,7 +24,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex min-h-screen w-full">
-      {isLoggedIn && !isHiddenRoute && <AppSidebar userRole={userRole} />}
+      {isLoggedIn && !isHiddenRoute && <AppSidebar />}
 
       <main className="flex-1 p-6 max-w-8xl mx-auto w-full">{children}</main>
     </div>

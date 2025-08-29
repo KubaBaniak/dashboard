@@ -30,6 +30,7 @@ import {
 import StatusBadge from "@/components/utils/StatusBadge";
 import { formatCurrency } from "@/components/utils/format-currency";
 import { useClientOrders } from "@/hooks/orders/useClientOrders";
+import { OrderStatus } from "../orders/types";
 
 type Props = {
   client: {
@@ -88,7 +89,7 @@ export default function ClientOrdersDialog({
             <Select
               value={status}
               onValueChange={(v) => {
-                setStatus(v as any);
+                setStatus(v as OrderStatus);
                 setPage(1);
               }}
             >

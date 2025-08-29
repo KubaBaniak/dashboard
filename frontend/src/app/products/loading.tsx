@@ -1,5 +1,5 @@
-import { LoadingSpinner } from "@/components/utils/Loader";
+import CenteredSpinner from "@/components/utils/CenteredSpinner";
 
 export default function LoadingSettings() {
-  return <LoadingSpinner />;
+  return <CenteredSpinner />;
 }

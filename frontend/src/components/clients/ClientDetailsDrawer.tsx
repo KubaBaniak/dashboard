@@ -79,9 +79,11 @@ export default function ClientDetailsDrawer({
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetContent side="right" className="w-full sm:max-w-2xl p-0">
-        {/* Header band */}
-        <div className="bg-gradient-to-b from-primary/5 to-transparent border-b p-4 sm:p-5">
+      <SheetContent
+        side="right"
+        className="w-full sm:max-w-2xl p-0 h-full flex flex-col"
+      >
+        <div className="sticky top-0 bg-gradient-to-b from-primary/5 to-transparent border-b p-4 sm:p-5 pr-12">
           <SheetHeader className="space-y-1">
             <SheetTitle className="text-xl font-semibold">
               Client #{client.id} — {client.name || client.email}
@@ -93,8 +95,8 @@ export default function ClientDetailsDrawer({
           </SheetHeader>
         </div>
 
-        {/* Content */}
-        <div className="space-y-6 p-4 sm:p-6">
+        {/* Scrollable content */}
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
           {/* Profile */}
           <div className="rounded-2xl border bg-card p-4 shadow-sm">
             <div className="flex items-center justify-between mb-3">

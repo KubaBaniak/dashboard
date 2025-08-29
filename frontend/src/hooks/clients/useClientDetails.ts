@@ -38,7 +38,7 @@ export function useClientDetails(
     queryKey: ["clientOverview", clientId],
     enabled,
     queryFn: async ({ signal }) => {
-      const { data } = await api.get(`/clients/${clientId}/overview`, {
+      const { data } = await api.get<unknown>(`/clients/${clientId}/overview`, {
         withCredentials: true,
         signal,
       });
@@ -50,33 +50,62 @@ export function useClientDetails(
   });
 }
 
-function normalizeOverview(payload: any): ClientOverview {
-  const statsIn = payload?.stats ?? {};
+function isRecord(v: unknown): v is Record<string, unknown> {
+  return v !== null && typeof v === "object";
+}
+
+function toNumber(v: unknown): number {
+  return typeof v === "number" ? v : Number(v);
+}
+
+function toString(v: unknown): string {
+  return typeof v === "string" ? v : String(v);
+}
+
+function normalizeOverview(payload: unknown): ClientOverview {
+  const root = isRecord(payload) ? payload : {};
+
+  const statsIn = isRecord(root.stats) ? root.stats : {};
+
   const stats: ClientStats = {
-    totalOrders: statsIn.totalOrders,
-    lifetimeSpend: statsIn.lifetimeSpend,
-    averageOrderValue: statsIn.averageOrderValue,
-    firstOrderAt: statsIn.firstOrderAt ?? null,
-    lastOrderAt: statsIn.lastOrderAt ?? null,
+    totalOrders: toNumber(statsIn.totalOrders ?? 0),
+    lifetimeSpend: toNumber(statsIn.lifetimeSpend ?? 0),
+    averageOrderValue: toNumber(statsIn.averageOrderValue ?? 0),
+    firstOrderAt:
+      typeof statsIn.firstOrderAt === "string" ? statsIn.firstOrderAt : null,
+    lastOrderAt:
+      typeof statsIn.lastOrderAt === "string" ? statsIn.lastOrderAt : null,
     ordersPerMonth:
-      statsIn.ordersPerMonth == null ? null : statsIn.ordersPerMonth,
+      statsIn.ordersPerMonth == null ? null : toNumber(statsIn.ordersPerMonth),
   };
 
-  const topProducts: ClientTopProduct[] = Array.isArray(payload?.topProducts)
-    ? payload.topProducts.map((p: any) => ({
-        productId: Number(p.productId),
-        title: p.title ?? null,
-        quantity: p.quantity,
-      }))
+  const topProductsSrc = Array.isArray(root.topProducts)
+    ? root.topProducts
     : [];
 
-  const orders: ClientOrderSummary[] = Array.isArray(payload?.orders)
-    ? payload.orders.map((o: any) => ({
-        id: Number(o.id),
-        createdAt: String(o.createdAt),
-        total: o.total,
-      }))
-    : [];
+  const topProducts: ClientTopProduct[] = topProductsSrc.map(
+    (item): ClientTopProduct => {
+      const rec = isRecord(item) ? item : {};
+      return {
+        productId: toNumber(rec.productId),
+        title: typeof rec.title === "string" ? rec.title : null,
+        quantity: toNumber(rec.quantity),
+      };
+    },
+  );
+
+  const ordersSrc = Array.isArray(root.orders) ? root.orders : [];
+
+  const orders: ClientOrderSummary[] = ordersSrc.map(
+    (item): ClientOrderSummary => {
+      const rec = isRecord(item) ? item : {};
+      return {
+        id: toNumber(rec.id),
+        createdAt: toString(rec.createdAt),
+        total: toNumber(rec.total),
+      };
+    },
+  );
 
   return { stats, topProducts, orders };
 }

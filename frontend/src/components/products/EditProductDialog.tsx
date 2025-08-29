@@ -50,7 +50,6 @@ type ProductForEdit = {
 
 type Props = {
   product: ProductForEdit;
-  trigger: React.ReactNode;
   onUpdated?: () => void;
 };
 

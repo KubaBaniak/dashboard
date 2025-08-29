@@ -32,7 +32,8 @@ export async function seedDb(): Promise<void> {
 
   console.log("Admin user seeded:", admin);
 
-  if (process.env.SEED_WHOLE_APP !== "true") {
+  const skipDbSeed = (await prisma.category.count()) > 10;
+  if (skipDbSeed || process.env.SEED_WHOLE_APP !== "true") {
     console.log("SEED_WHOLE_APP !== 'true' – skipping.");
     return;
   }

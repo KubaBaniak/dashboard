@@ -9,7 +9,6 @@ import CenteredSpinner from "@/components/utils/CenteredSpinner";
 
 import { SiteHeader } from "@/components/ui/site-header";
 import ClientsTable from "@/components/clients/ClientsTable";
-import BulkActionsToolbar from "@/components/clients/BulkActionsToolbar";
 
 export default function ClientsPage() {
   const { data: user, isLoading } = useAuth();

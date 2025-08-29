@@ -31,7 +31,7 @@ services:
     image: redis:8-alpine
     ports:
       - 6379:6379
-    columes:
+    volumes:
       - redis:/data
 
 volumes:
