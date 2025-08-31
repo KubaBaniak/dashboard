@@ -29,7 +29,7 @@ async function fetchUser(): Promise<PlainUser | null> {
 }
 
 export function useAuth() {
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, status, isError } = useQuery({
     queryKey: ["auth", "me"],
     queryFn: fetchUser,
     retry: false,
@@ -40,7 +40,8 @@ export function useAuth() {
   return {
     data,
     isLoading,
-    error,
+    status,
+    isError,
     isAuthenticated: !!data,
     isAdmin: data?.role === "ADMIN",
   };

@@ -120,7 +120,7 @@ export default function LoginPreview() {
                   className="w-full"
                   disabled={form.formState.isSubmitting}
                 >
-                  {form.formState.isSubmitting ? "Loggin in..." : "Login"}
+                  {form.formState.isSubmitting ? "Logging in..." : "Login"}
                 </Button>
               </div>
             </form>
