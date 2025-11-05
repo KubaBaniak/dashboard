@@ -36,20 +36,19 @@ export function StatCard({
 
   return (
     <Card className="@container/card">
-      <CardHeader className="space-y-1">
+      <CardHeader className="flex flex-col space-y-1">
         <CardDescription>{title}</CardDescription>
 
-        {/* value + badge row */}
-        <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl break-words">
-            {value}
-          </CardTitle>
+        <CardTitle className="break-words leading-tight text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+          {value}
+        </CardTitle>
 
-          <CardAction className="shrink-0">
+        <div className="flex w-full">
+          <CardAction className="mt-1 ml-0">
             <Badge
               variant="outline"
               className={cn(
-                "flex items-center gap-1 whitespace-nowrap px-2 py-0.5 text-xs @[250px]/card:text-sm",
+                "inline-flex items-center gap-1 whitespace-nowrap px-2 py-0.5 text-xs @[250px]/card:text-sm",
                 badgeClasses,
               )}
             >
