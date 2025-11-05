@@ -41,6 +41,9 @@ export default function CenteredSpinner({
       >
         <LoadingSpinner size={40} className="text-muted-foreground" />
         {text ? <p className="text-sm text-muted-foreground">{text}</p> : null}
+        <p className="text-sm text-muted-foreground">
+          Backend probably cold starts right now, hold on
+        </p>
       </div>
     </div>,
     document.body,
