@@ -64,12 +64,21 @@ export default function LoginPreview() {
   }
 
   return (
-    <div className="flex flex-col min-h-[50vh] h-full w-full items-center justify-center px-4">
+    <div className="flex flex-col h-full w-full items-center justify-center px-4">
       <Card className="mx-auto max-w-sm px-4">
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>
           <CardDescription>
             Enter your email and password to login to your account.
+          </CardDescription>
+          <CardDescription>
+            You can preview the app using test user credentials:
+          </CardDescription>
+          <CardDescription className="font-bold">
+            Email: admin@gmail.com
+          </CardDescription>
+          <CardDescription className="font-bold">
+            Password: Admin123
           </CardDescription>
         </CardHeader>
         <CardContent>

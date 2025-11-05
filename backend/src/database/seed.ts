@@ -137,7 +137,7 @@ export async function seedDb(): Promise<void> {
         }
       }
     },
-    { timeout: 60_000 },
+    { timeout: 60_000 * 60 },
   );
 
   console.log("✅ Seed finished.");
