@@ -45,10 +45,28 @@ export default function BulkActionsToolbar({
     typeof totalMatching === "number" && totalMatching > count;
 
   return (
-    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between rounded-md border border-muted p-3">
-      {/* Left side: selection info */}
-      <div className="flex items-center gap-2">
-        <Badge variant={hasSelection ? "default" : "secondary"}>
+    <div
+      className={[
+        // container
+        "rounded-lg border border-muted bg-card/50",
+        // padding responsive
+        "p-2 sm:p-3",
+        // layout: stack on mobile, align on larger screens
+        "flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between",
+      ].join(" ")}
+    >
+      {/* Left side: selection info + select helpers */}
+      <div
+        className={[
+          "flex min-w-0 items-center gap-1.5 sm:gap-2",
+          // allow wrapping and horizontal scroll on tiny screens
+          "flex-wrap",
+        ].join(" ")}
+      >
+        <Badge
+          variant={hasSelection ? "default" : "secondary"}
+          className="text-xs sm:text-sm"
+        >
           {count} selected
         </Badge>
 
@@ -56,11 +74,13 @@ export default function BulkActionsToolbar({
           <Button
             variant="ghost"
             size="sm"
-            className="h-8"
+            className="h-8 px-2 sm:px-3"
             disabled={busy}
             onClick={onSelectAllPage}
           >
-            Select all on page
+            <span className="truncate text-xs sm:text-sm">
+              Select all on page
+            </span>
           </Button>
         ) : null}
 
@@ -68,35 +88,47 @@ export default function BulkActionsToolbar({
           <Button
             variant="ghost"
             size="sm"
-            className="h-8"
+            className="h-8 px-2 sm:px-3"
             disabled={busy}
             onClick={onSelectAllMatching}
           >
-            Select all {totalMatching} results
+            <span className="truncate text-xs sm:text-sm">
+              Select all {totalMatching} results
+            </span>
           </Button>
         ) : null}
 
         <Button
           variant="ghost"
           size="sm"
-          className="h-8"
+          className="h-8 px-2 sm:px-3"
           onClick={onClearSelection}
           disabled={!hasSelection || busy}
+          aria-label="Clear selection"
         >
-          <X className="mr-2 h-4 w-4" />
-          Clear
+          <X className="mr-1 sm:mr-2 h-4 w-4 shrink-0" />
+          <span className="hidden sm:inline">Clear</span>
         </Button>
       </div>
 
-      <div className="flex items-center gap-2">
+      {/* Right side: primary actions */}
+      <div
+        className={[
+          "flex items-center gap-1.5 sm:gap-2",
+          // make buttons stretch on very small screens if needed
+          "flex-wrap justify-end",
+        ].join(" ")}
+      >
         <Button
           variant="outline"
           size="sm"
+          className="h-8 px-2 sm:px-3"
           disabled={!hasSelection || busy || !onExportSelected}
           onClick={() => onExportSelected?.(selectedIds)}
+          aria-label="Export selected"
         >
-          <Download className="mr-2 h-4 w-4" />
-          Export
+          <Download className="mr-1 sm:mr-2 h-4 w-4 shrink-0" />
+          <span className="hidden sm:inline">Export</span>
         </Button>
 
         <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
@@ -104,10 +136,12 @@ export default function BulkActionsToolbar({
             <Button
               variant="destructive"
               size="sm"
+              className="h-8 px-2 sm:px-3"
               disabled={!hasSelection || busy || !onDeleteSelected}
+              aria-label="Delete selected"
             >
-              <Trash2 className="mr-2 h-4 w-4" />
-              Delete
+              <Trash2 className="mr-1 sm:mr-2 h-4 w-4 shrink-0" />
+              <span className="hidden sm:inline">Delete</span>
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
